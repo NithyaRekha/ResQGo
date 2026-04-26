@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Ambulance Request</title>
+
+<style>
+body {
+    font-family: Arial;
+    margin: 0;
+    background: #f5f5f5;
+}
+
+/* NAVBAR */
+.navbar {
+    display:flex;
+    justify-content: space-between;
+    padding:15px;
+    background:#1D3557;
+    color:white;
+}
+
+.navbar a {
+    color:white;
+    margin-right:15px;
+    text-decoration:none;
+}
+
+/* FORM */
+.container {
+    width: 60%;
+    margin: 30px auto;
+    background: white;
+    padding: 20px;
+    border-radius: 10px;
+}
+
+h2 {
+    text-align: center;
+}
+
+input, select {
+    width: 100%;
+    padding: 10px;
+    margin: 8px 0;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+}
+
+button {
+    width: 100%;
+    padding: 12px;
+    background: #E63946;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+button:hover {
+    opacity: 0.9;
+}
+</style>
+</head>
+
+<body>
+
+<!-- NAVBAR -->
+<div class="navbar">
+    <div><b>🚑 ResQGo</b></div>
+
+    <div>
+        <a href="/">Home</a>
+        <a href="/dashboard">Dashboard</a>
+        
+    </div>
+</div>
+
+<!-- FORM -->
+<div class="container">
+
+    <h2>Ambulance Request</h2>
+
+    <input id="name" placeholder="Patient Name">
+    <input id="phone" placeholder="Phone Number">
+    <input id="email" placeholder="Email Address">
+    <input id="issue" placeholder="Health Issue">
+
+    <select id="location">
+    <option value="">Select Pickup Location</option>
+
+    {% for loc in locations %}
+        <option value="{{ loc }}">{{ loc }}</option>
+    {% endfor %}
+
+    </select>
+
+    <select id="radius">
+        <option>Select Search Radius</option>
+        <option>1 km</option>
+        <option>3 km</option>
+        <option>5 km</option>
+        <option>10 km</option>
+    </select>
+
+    <button onclick="sendRequest()">Submit Request 🚑</button>
+
+    <pre id="output"></pre>
+
+</div>
+
+<script>
+function sendRequest() {
+
+    let data = {
+        name: document.getElementById("name").value,
+        phone: document.getElementById("phone").value,
+        email: document.getElementById("email").value,
+        location: document.getElementById("location").value,
+        issue: document.getElementById("issue").value,
+        radius: document.getElementById("radius").value
+    };
+
+    fetch("/request", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify(data)
+    })
+    .then(res => res.json())
+    .then(data => {
+
+    if (data.error) {
+        document.getElementById("output").innerText = data.error;
+        return;
+    }
+
+    // ✅ FIX: include form data + backend data together
+    let fullData = {
+        name: document.getElementById("name").value,
+        phone: document.getElementById("phone").value,
+        email: document.getElementById("email").value,
+        location: document.getElementById("location").value,
+        issue: document.getElementById("issue").value,
+
+        // backend response
+        ambulance: data.ambulance,
+        hospital: data.hospital,
+        time: data.time,
+        distance: data.distance
+    };
+
+    localStorage.setItem("ambulance_data", JSON.stringify(fullData));
+
+    window.location.href = "/dashboard";
+});
+}
+</script>
+
+</body>
+</html>
