@@ -1,161 +1,664 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
+
 <head>
-<title>Ambulance Request</title>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>ResQGo - Ambulance Request</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+<link rel="stylesheet"
+href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 
 <style>
-body {
-    font-family: Arial;
-    margin: 0;
-    background: #f5f5f5;
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+}
+
+body{
+
+    font-family:'Poppins',sans-serif;
+
+    background:linear-gradient(
+        135deg,
+        #08162b,
+        #102a4a,
+        #153a66
+    );
+
+    color:white;
+
+    min-height:100vh;
 }
 
 /* NAVBAR */
-.navbar {
+
+.navbar{
+
     display:flex;
-    justify-content: space-between;
-    padding:15px;
-    background:#1D3557;
+    justify-content:space-between;
+    align-items:center;
+
+    padding:18px 60px;
+
+    background:rgba(8,22,43,0.95);
+
+    backdrop-filter:blur(10px);
+
+    border-bottom:1px solid rgba(255,255,255,0.08);
+}
+
+.logo{
+    font-size:28px;
+    font-weight:700;
     color:white;
 }
 
-.navbar a {
+.nav-links a{
+
     color:white;
-    margin-right:15px;
+
     text-decoration:none;
+
+    margin-left:25px;
+
+    font-weight:600;
+
+    transition:0.3s;
 }
 
-/* FORM */
-.container {
-    width: 60%;
-    margin: 30px auto;
-    background: white;
-    padding: 20px;
-    border-radius: 10px;
+.nav-links a:hover{
+    color:#4db8ff;
 }
 
-h2 {
-    text-align: center;
+/* MAIN */
+
+.container{
+
+    width:100%;
+
+    display:flex;
+    justify-content:center;
+    align-items:center;
+
+    padding:45px 20px;
 }
 
-input, select {
-    width: 100%;
-    padding: 10px;
-    margin: 8px 0;
-    border-radius: 5px;
-    border: 1px solid #ccc;
+/* FORM BOX */
+
+.form-box{
+
+    width:100%;
+    max-width:760px;
+
+    background:rgba(21,58,102,0.90);
+
+    border-radius:24px;
+
+    padding:40px;
+
+    backdrop-filter:blur(12px);
+
+    box-shadow:0 10px 40px rgba(0,0,0,0.3);
+
+    border:1px solid rgba(255,255,255,0.08);
 }
 
-button {
-    width: 100%;
-    padding: 12px;
-    background: #E63946;
-    color: white;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
+.form-title{
+
+    text-align:center;
+
+    font-size:34px;
+
+    font-weight:700;
+
+    margin-bottom:10px;
 }
 
-button:hover {
-    opacity: 0.9;
+.form-subtitle{
+
+    text-align:center;
+
+    color:#CBD5E1;
+
+    margin-bottom:30px;
+
+    line-height:1.8;
+
+    font-size:15px;
 }
+
+/* INPUTS */
+
+.input-group{
+    margin-bottom:22px;
+}
+
+.input-group label{
+
+    display:block;
+
+    margin-bottom:8px;
+
+    font-size:15px;
+
+    color:#E2E8F0;
+}
+
+.required{
+    color:#ff3b3b;
+    font-weight:bold;
+}
+
+.input-box{
+    position:relative;
+}
+
+.input-box i{
+
+    position:absolute;
+
+    top:18px;
+    left:16px;
+
+    color:#94A3B8;
+}
+
+input,
+textarea{
+
+    width:100%;
+
+    padding:15px 15px 15px 48px;
+
+    border:none;
+
+    border-radius:12px;
+
+    background:#F8FAFC;
+
+    font-size:15px;
+
+    outline:none;
+
+    color:#08162b;
+}
+
+textarea{
+    resize:none;
+    height:120px;
+}
+
+/* LOCATION */
+
+.location-box{
+
+    margin-top:10px;
+
+    background:rgba(255,255,255,0.08);
+
+    padding:15px;
+
+    border-radius:12px;
+
+    color:#dbeafe;
+
+    line-height:1.7;
+}
+
+/* BUTTON */
+
+.submit-btn{
+
+    width:100%;
+
+    padding:16px;
+
+    border:none;
+
+    border-radius:14px;
+
+    background:linear-gradient(
+        135deg,
+        #ff2e2e,
+        #ff6a00
+    );
+
+    color:white;
+
+    font-size:17px;
+
+    font-weight:600;
+
+    cursor:pointer;
+
+    transition:0.3s;
+
+    margin-top:10px;
+
+    box-shadow:0 10px 25px rgba(255,80,0,0.3);
+}
+
+.submit-btn:hover{
+
+    transform:translateY(-3px);
+
+    box-shadow:0 10px 30px rgba(255,80,0,0.45);
+}
+
+/* OUTPUT */
+
+#output{
+
+    margin-top:20px;
+
+    text-align:center;
+
+    font-size:15px;
+
+    line-height:1.8;
+
+    color:#FFD166;
+}
+
+/* COPYRIGHT */
+
+.copyright{
+
+    text-align:center;
+
+    padding:18px;
+
+    color:#9fb8da;
+
+    font-size:13px;
+
+    background:#04101f;
+
+    margin-top:40px;
+}
+
+/* MOBILE */
+
+@media(max-width:768px){
+
+    .navbar{
+        padding:18px 20px;
+    }
+
+    .nav-links{
+        display:none;
+    }
+
+    .form-box{
+        padding:28px;
+    }
+
+    .form-title{
+        font-size:28px;
+    }
+}
+
 </style>
+
 </head>
 
 <body>
 
 <!-- NAVBAR -->
-<div class="navbar">
-    <div><b>🚑 ResQGo</b></div>
 
-    <div>
-        <a href="/">Home</a>
-        <a href="/dashboard">Dashboard</a>
-        
+<div class="navbar">
+
+    <div class="logo">
+        🚑 ResQGo
     </div>
+
+    <div class="nav-links">
+
+        <a href="/">Home</a>
+
+        <a href="/dashboard">Dashboard</a>
+
+    </div>
+
 </div>
 
-<!-- FORM -->
+<!-- MAIN -->
+
 <div class="container">
 
-    <h2>Ambulance Request</h2>
+    <div class="form-box">
 
-    <input id="name" placeholder="Patient Name">
-    <input id="phone" placeholder="Phone Number">
-    <input id="email" placeholder="Email Address">
-    <input id="issue" placeholder="Health Issue">
+        <div class="form-title">
+            Emergency Ambulance Request
+        </div>
 
-    <select id="location">
-    <option value="">Select Pickup Location</option>
+        <div class="form-subtitle">
+            Enter patient details below to request the nearest available ambulance.
+        </div>
 
-    {% for loc in locations %}
-        <option value="{{ loc }}">{{ loc }}</option>
-    {% endfor %}
+        <!-- NAME -->
 
-    </select>
+        <div class="input-group">
 
-    <select id="radius">
-        <option>Select Search Radius</option>
-        <option>1 km</option>
-        <option>3 km</option>
-        <option>5 km</option>
-        <option>10 km</option>
-    </select>
+            <label>
+                Patient Name <span class="required">*</span>
+            </label>
 
-    <button onclick="sendRequest()">Submit Request 🚑</button>
+            <div class="input-box">
 
-    <pre id="output"></pre>
+                <i class="fa-solid fa-user"></i>
+
+                <input
+                type="text"
+                id="name"
+                placeholder="Enter patient name">
+
+            </div>
+
+        </div>
+
+        <!-- PHONE -->
+
+        <div class="input-group">
+
+            <label>
+                Phone Number <span class="required">*</span>
+            </label>
+
+            <div class="input-box">
+
+                <i class="fa-solid fa-phone"></i>
+
+                <input
+                type="text"
+                id="phone"
+                placeholder="Enter 10-digit mobile number">
+
+            </div>
+
+        </div>
+
+        <!-- EMAIL -->
+
+        <div class="input-group">
+
+            <label>
+                Email Address <span class="required">*</span>
+            </label>
+
+            <div class="input-box">
+
+                <i class="fa-solid fa-envelope"></i>
+
+                <input
+                type="email"
+                id="email"
+                placeholder="Enter Gmail address">
+
+            </div>
+
+        </div>
+
+        <!-- ISSUE -->
+
+        <div class="input-group">
+
+            <label>
+                Health Issue <span class="required">*</span>
+            </label>
+
+            <div class="input-box">
+
+                <i class="fa-solid fa-heart-pulse"></i>
+
+                <textarea
+                id="issue"
+                placeholder="Describe emergency condition"></textarea>
+
+            </div>
+
+        </div>
+
+        <!-- LOCATION -->
+
+        <div class="input-group">
+
+            <label>Live Location</label>
+
+            <div class="location-box" id="location">
+                Detecting your live location...
+            </div>
+
+        </div>
+
+        <!-- BUTTON -->
+
+        <button class="submit-btn" onclick="sendRequest()">
+
+            Request Ambulance 🚑
+
+        </button>
+
+        <div id="output"></div>
+
+    </div>
 
 </div>
 
 <script>
-function sendRequest() {
 
-    let data = {
-        name: document.getElementById("name").value,
-        phone: document.getElementById("phone").value,
-        email: document.getElementById("email").value,
-        location: document.getElementById("location").value,
-        issue: document.getElementById("issue").value,
-        radius: document.getElementById("radius").value
-    };
+/* LOCATION */
 
-    fetch("/request", {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json"
-        },
-        body: JSON.stringify(data)
-    })
-    .then(res => res.json())
-    .then(data => {
+let detectedAddress = "";
 
-    if (data.error) {
-        document.getElementById("output").innerText = data.error;
+function getLocation(){
+
+    if(!navigator.geolocation){
+
+        document.getElementById("location").innerHTML =
+        "Geolocation not supported.";
+
         return;
     }
 
-    // ✅ FIX: include form data + backend data together
-    let fullData = {
-        name: document.getElementById("name").value,
-        phone: document.getElementById("phone").value,
-        email: document.getElementById("email").value,
-        location: document.getElementById("location").value,
-        issue: document.getElementById("issue").value,
+    navigator.geolocation.getCurrentPosition(
 
-        // backend response
-        ambulance: data.ambulance,
-        hospital: data.hospital,
-        time: data.time,
-        distance: data.distance
+        async function(position){
+
+            window.userLat = position.coords.latitude;
+            window.userLon = position.coords.longitude;
+
+            try{
+
+                let res = await fetch(
+
+                    `https://nominatim.openstreetmap.org/reverse?format=json&lat=${window.userLat}&lon=${window.userLon}&accept-language=en`
+
+                );
+
+                let data = await res.json();
+
+                let address = data.address;
+
+                detectedAddress =
+                    (address.suburb ||
+                    address.neighbourhood ||
+                    address.village ||
+                    "Vittasandra")
+                    + ", " +
+                    (address.city ||
+                    "Bengaluru")
+                    + ", " +
+                    (address.state ||
+                    "Karnataka");
+
+                document.getElementById("location").innerHTML =
+                detectedAddress;
+
+            }
+
+            catch(error){
+
+                document.getElementById("location").innerHTML =
+                "Unable to fetch location.";
+            }
+
+        },
+
+        function(){
+
+            document.getElementById("location").innerHTML =
+            "Please allow GPS access.";
+
+        },
+
+        {
+            enableHighAccuracy:true,
+            timeout:10000,
+            maximumAge:0
+        }
+
+    );
+}
+
+window.onload = getLocation;
+
+/* VALIDATIONS */
+
+function validatePhone(phone){
+
+    return /^[0-9]{10}$/.test(phone);
+}
+
+function validateEmail(email){
+
+    return /^[a-zA-Z0-9._%+-]+@gmail\.com$/.test(email);
+}
+
+/* SEND REQUEST */
+
+function sendRequest(){
+
+    let name =
+    document.getElementById("name").value.trim();
+
+    let phone =
+    document.getElementById("phone").value.trim();
+
+    let email =
+    document.getElementById("email").value.trim();
+
+    let issue =
+    document.getElementById("issue").value.trim();
+
+    if(!name || !phone || !email || !issue){
+
+        document.getElementById("output").innerHTML =
+        "⚠ Please fill all fields.";
+
+        return;
+    }
+
+    if(!validatePhone(phone)){
+
+        document.getElementById("output").innerHTML =
+        "⚠ Enter valid 10-digit phone number.";
+
+        return;
+    }
+
+    if(!validateEmail(email)){
+
+        document.getElementById("output").innerHTML =
+        "⚠ Enter valid Gmail address.";
+
+        return;
+    }
+
+    if(window.userLat === undefined){
+
+        document.getElementById("output").innerHTML =
+        "⚠ GPS loading... please wait.";
+
+        return;
+    }
+
+    let data = {
+
+        name:name,
+        phone:phone,
+        email:email,
+        issue:issue,
+
+        location:detectedAddress,
+
+        lat:window.userLat,
+        lon:window.userLon
     };
 
-    localStorage.setItem("ambulance_data", JSON.stringify(fullData));
+    fetch("http://127.0.0.1:5000/request", {
 
-    window.location.href = "/dashboard";
-});
+        method:"POST",
+
+        headers:{
+            "Content-Type":"application/json"
+        },
+
+        body:JSON.stringify(data)
+
+    })
+
+    .then(response => response.json())
+
+    .then(result => {
+
+        if(result.error){
+
+            document.getElementById("output").innerHTML =
+            "❌ " + result.error;
+
+            return;
+        }
+
+        localStorage.setItem(
+            "ambulance_data",
+            JSON.stringify(result)
+        );
+
+        document.getElementById("output").innerHTML =
+        "✅ Ambulance assigned successfully...";
+
+        setTimeout(() => {
+
+            window.location.href = "/dashboard";
+
+        }, 1800);
+
+    })
+
+    .catch(error => {
+
+        console.log(error);
+
+        document.getElementById("output").innerHTML =
+        "❌ Server connection failed.";
+
+    });
+
 }
+
 </script>
+
+<div class="copyright">
+    © 2026 ResQGo. All Rights Reserved.
+</div>
 
 </body>
 </html>

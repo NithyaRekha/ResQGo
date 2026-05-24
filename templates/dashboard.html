@@ -3,156 +3,170 @@
 <head>
 <title>ResQGo Dashboard</title>
 
+<link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css"/>
+
 <style>
 body {
     margin: 0;
     font-family: Arial;
-    background: #0b1f3a; /* dark blue theme */
-    color: white;
-}
-
-/* TOP BAR */
-.topbar {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 15px 25px;
     background: #08162b;
-}
-
-.topbar a {
     color: white;
-    text-decoration: none;
-    margin-right: 20px;
-    font-weight: bold;
 }
 
-/* MAIN LAYOUT */
-.container {
+.wrapper {
     display: flex;
-    height: calc(100vh - 60px);
+    height: 100vh;
 }
 
 /* LEFT PANEL */
 .left {
-    width: 40%;
-    padding: 20px;
-    background: #0f2a4d;
+    width: 35%;
+    background: #0b1f3a;
+    padding: 15px;
+    overflow-y: auto;
 }
 
 .card {
-    background: #153a66;
+    background: #102a4a;
     padding: 12px;
-    margin: 10px 0;
-    border-radius: 8px;
+    border-radius: 10px;
+    margin-bottom: 10px;
 }
 
-/* RIGHT PANEL */
-.right {
-    width: 60%;
-    background: #0b1f3a;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border-left: 2px solid #1d3557;
-}
-
-/* BUTTONS */
-button {
-    width: 100%;
-    padding: 12px;
-    margin-top: 10px;
-    border: none;
+.block {
+    background: #0e2a4a;
+    padding: 8px;
     border-radius: 6px;
-    cursor: pointer;
-    font-weight: bold;
+    margin-top: 5px;
 }
 
-.track {
-    background: #E63946;
-    color: white;
-}
-
-.home {
-    background: white;
-    color: #0b1f3a;
+/* MAP */
+#map {
+    width: 65%;
+    height: 100%;
 }
 </style>
 </head>
 
 <body>
 
-<!-- TOP BAR -->
-<div class="topbar">
+<div class="wrapper">
 
-    <div>
-        <a href="/">🏠 Home</a>
-        <a href="/dashboard">Dashboard</a>
+<!-- LEFT -->
+<div class="left">
+
+    <div class="card">
+        <b>🚑 Status</b>
+        <div id="status">Loading...</div>
     </div>
 
-    <div>
-        <b>🚑 ResQGo</b>
+    <div class="card">
+        <b>👤 Patient</b>
+        <div id="patient"></div>
+    </div>
+
+    <div class="card">
+        <b>📍 Pickup</b>
+        <div id="pickup"></div>
+    </div>
+
+    <div class="card">
+        <b>🏥 Hospital</b>
+        <div id="hospital"></div>
+    </div>
+
+    <div class="card">
+        <b>🚑 Ambulance</b>
+        <div id="ambulance"></div>
     </div>
 
 </div>
 
-<!-- MAIN -->
-<div class="container">
-
-    <!-- LEFT SIDE -->
-    <div class="left">
-
-    <h2>🚑 Ambulance Tracking</h2>
-
-    <div class="card">👤 Patient Name: <span id="name">-</span></div>
-    <div class="card">📍 Current Location: <span id="current">-</span></div>
-    <div class="card">📌 Pickup Location: <span id="pickup">-</span></div>
-    <div class="card">🏥 Destination: <span id="dest">-</span></div>
-    <div class="card">⏱ Timestamp: <span id="time">-</span></div>
-    <div class="card">🚨 ETA: <span id="eta">-</span></div>
-    <div class="card">⚡ Avg Speed: <span id="speed">-</span></div>
-
-    <button class="track" onclick="location.href='/request_page'">
-        Track Another Ambulance
-    </button>
-
-    
+<!-- MAP -->
+<div id="map"></div>
 
 </div>
 
-    <!-- RIGHT SIDE -->
-   <div class="right">
-    <iframe
-        id="mapFrame"
-        width="100%"
-        height="100%"
-        frameborder="0"
-        style="border:0"
-        src="https://www.google.com/maps?q=HSR%20Layout%20Bangalore&output=embed">
-    </iframe>
-</div>
-</body>
+<script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+<script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
+
 <script>
-let data = JSON.parse(localStorage.getItem("ambulance_data"));
 
-if (data) {
+let map = L.map('map').setView([12.97, 77.59], 13);
 
-    document.getElementById("name").innerText = data.name || "-";
-    document.getElementById("current").innerText = data.location || "-";
-    document.getElementById("pickup").innerText = data.location || "-";
-    document.getElementById("dest").innerText = data.hospital || "-";
+L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    maxZoom: 19
+}).addTo(map);
 
-    document.getElementById("time").innerText = new Date().toLocaleString();
-    document.getElementById("eta").innerText = data.time ? data.time + " min" : "-";
-    document.getElementById("speed").innerText = "45 km/h";
+let ambulanceIcon = L.icon({
+    iconUrl: "https://cdn-icons-png.flaticon.com/512/2967/2967347.png",
+    iconSize: [40, 40]
+});
 
-    // 🚑 SIMPLE ROUTE MAP (WORKING)
-    let origin = data.location;
-    let destination = data.hospital;
+let ambulanceMarker;
+let pickupMarker;
 
-    document.getElementById("mapFrame").src =
-        "https://www.google.com/maps?q=" +
-        encodeURIComponent(origin + " to " + destination) +
-        "&output=embed";
+/* SOCKET CONNECTION */
+const socket = io();
+
+/* LIVE TRACKING */
+socket.on("live_update", function(data) {
+
+    if (ambulanceMarker) {
+        ambulanceMarker.setLatLng([data.lat, data.lon]);
+        map.panTo([data.lat, data.lon]); // like Ola/Uber tracking
+    }
+});
+
+/* LOAD DATA */
+function load() {
+
+    let data = JSON.parse(localStorage.getItem("ambulance_data"));
+
+    if (!data) {
+        document.getElementById("status").innerText = "No request found";
+        return;
+    }
+
+    document.getElementById("patient").innerHTML =
+        `<div class="block">${data.name || "N/A"}</div>`;
+
+    document.getElementById("pickup").innerHTML =
+        `<div class="block">${data.location || "N/A"}</div>`;
+
+    document.getElementById("hospital").innerHTML =
+        `<div class="block">${data.hospital || "Apollo Hospital"}</div>`;
+
+    document.getElementById("status").innerText = "🚑 Ambulance Assigned";
+
+    document.getElementById("ambulance").innerHTML =
+        `🚑 ${data.ambulance || "AMB-101"}`;
+
+    startMap();
 }
+
+/* MAP INIT */
+function startMap() {
+
+    let start = [12.96, 77.58];
+    let end = [12.97, 77.59];
+
+    // ambulance marker
+    ambulanceMarker = L.marker(start, { icon: ambulanceIcon }).addTo(map);
+
+    // pickup marker (blue circle like Uber)
+    pickupMarker = L.circleMarker(end, {
+        radius: 10,
+        color: "blue",
+        fillColor: "blue",
+        fillOpacity: 0.8
+    }).addTo(map).bindPopup("Pickup Location");
+
+}
+
+window.onload = load;
+
 </script>
+
+</body>
+</html>
