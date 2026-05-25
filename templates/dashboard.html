@@ -1,172 +1,724 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
+
 <head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
 <title>ResQGo Dashboard</title>
 
-<link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css"/>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
+<script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
 
 <style>
-body {
-    margin: 0;
-    font-family: Arial;
-    background: #08162b;
-    color: white;
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
 }
 
-.wrapper {
-    display: flex;
-    height: 100vh;
+body{
+    font-family:'Poppins',sans-serif;
+    background:#071426;
+    overflow:hidden;
+}
+
+/* MAIN LAYOUT */
+
+.main-container{
+    display:flex;
+    width:100%;
+    height:100vh;
 }
 
 /* LEFT PANEL */
-.left {
-    width: 35%;
-    background: #0b1f3a;
-    padding: 15px;
-    overflow-y: auto;
+
+.left-panel{
+
+    width:35%;
+
+    background:linear-gradient(
+        180deg,
+        #0d2038,
+        #102845
+    );
+
+    color:white;
+
+    padding:28px;
+
+    overflow-y:auto;
+
+    border-right:1px solid rgba(255,255,255,0.08);
 }
 
-.card {
-    background: #102a4a;
-    padding: 12px;
-    border-radius: 10px;
-    margin-bottom: 10px;
+/* RIGHT PANEL */
+
+.map-panel{
+    width:65%;
+    position:relative;
 }
 
-.block {
-    background: #0e2a4a;
-    padding: 8px;
-    border-radius: 6px;
-    margin-top: 5px;
+#map{
+    width:100%;
+    height:100vh;
 }
 
-/* MAP */
-#map {
-    width: 65%;
-    height: 100%;
+/* TOP BOX */
+
+.top-box{
+
+    background:rgba(255,255,255,0.06);
+
+    border:1px solid rgba(255,255,255,0.08);
+
+    padding:24px;
+
+    border-radius:24px;
+
+    backdrop-filter:blur(14px);
 }
+
+.top-box h1{
+    font-size:30px;
+    margin-bottom:10px;
+}
+
+.top-box h2{
+    font-size:60px;
+    color:#00c2ff;
+    margin-bottom:10px;
+}
+
+.status{
+    color:#c7ddff;
+    font-size:15px;
+    line-height:1.7;
+}
+
+/* STEPS */
+
+.steps{
+
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+
+    margin-top:35px;
+}
+
+.step{
+    text-align:center;
+    flex:1;
+}
+
+.circle{
+
+    width:45px;
+    height:45px;
+
+    border-radius:50%;
+
+    background:#1f395d;
+
+    display:flex;
+    align-items:center;
+    justify-content:center;
+
+    margin:auto;
+
+    font-weight:700;
+
+    color:#8fb8e8;
+}
+
+.step span{
+    display:block;
+    margin-top:10px;
+    font-size:13px;
+    color:#8fb8e8;
+}
+
+.active .circle{
+
+    background:#00c2ff;
+
+    color:white;
+
+    box-shadow:0 0 18px rgba(0,194,255,0.7);
+}
+
+.active span{
+    color:white;
+}
+
+.line{
+    height:3px;
+    background:#29486e;
+    flex:1;
+    margin:0 5px;
+}
+
+/* DRIVER CARD */
+
+.driver-card{
+
+    margin-top:35px;
+
+    background:rgba(255,255,255,0.06);
+
+    border:1px solid rgba(255,255,255,0.08);
+
+    padding:28px;
+
+    border-radius:24px;
+
+    text-align:center;
+}
+
+.driver-img{
+
+    width:110px;
+    height:110px;
+
+    border-radius:50%;
+
+    object-fit:cover;
+
+    border:4px solid #00c2ff;
+
+    box-shadow:0 0 25px rgba(0,194,255,0.4);
+}
+
+.driver-card h3{
+    margin-top:15px;
+    font-size:28px;
+}
+
+.vehicle{
+
+    margin-top:8px;
+
+    color:#00c2ff;
+
+    font-weight:700;
+
+    font-size:16px;
+}
+
+.driver-phone{
+    margin-top:10px;
+    color:#d8ebff;
+}
+
+/* PATIENT CARD */
+
+.patient-card{
+
+    margin-top:28px;
+
+    background:rgba(255,255,255,0.06);
+
+    border:1px solid rgba(255,255,255,0.08);
+
+    padding:25px;
+
+    border-radius:24px;
+}
+
+.patient-card h3{
+    margin-bottom:18px;
+    font-size:24px;
+}
+
+.patient-card p{
+
+    margin-top:12px;
+
+    color:#d8ebff;
+
+    line-height:1.7;
+}
+
+/* BUTTONS */
+
+.buttons{
+
+    display:flex;
+
+    gap:15px;
+
+    margin-top:30px;
+}
+
+.call-btn,
+.cancel-btn{
+
+    flex:1;
+
+    padding:16px;
+
+    border:none;
+
+    border-radius:16px;
+
+    font-size:16px;
+
+    font-weight:600;
+
+    color:white;
+
+    cursor:pointer;
+
+    transition:0.3s;
+}
+
+.call-btn{
+
+    background:linear-gradient(
+        135deg,
+        #00b4ff,
+        #007bff
+    );
+}
+
+.cancel-btn{
+
+    background:linear-gradient(
+        135deg,
+        #ff3b3b,
+        #ff0000
+    );
+}
+
+.call-btn:hover,
+.cancel-btn:hover{
+    transform:translateY(-3px);
+}
+
+/* LIVE BADGE */
+
+.live-pill{
+
+    position:absolute;
+
+    top:20px;
+    right:20px;
+
+    background:#00c853;
+
+    color:white;
+
+    padding:12px 20px;
+
+    border-radius:50px;
+
+    font-size:14px;
+
+    font-weight:700;
+
+    box-shadow:0 8px 25px rgba(0,0,0,0.25);
+
+    z-index:100;
+}
+
+/* MAP INFO */
+
+.map-overlay{
+
+    position:absolute;
+
+    bottom:25px;
+    left:25px;
+
+    background:rgba(7,20,38,0.9);
+
+    color:white;
+
+    padding:18px 22px;
+
+    border-radius:18px;
+
+    backdrop-filter:blur(10px);
+
+    box-shadow:0 10px 25px rgba(0,0,0,0.25);
+
+    z-index:100;
+}
+
+.map-overlay h4{
+    margin-bottom:8px;
+}
+
+/* MOBILE */
+
+@media(max-width:900px){
+
+    .main-container{
+        flex-direction:column;
+    }
+
+    .left-panel{
+        width:100%;
+        height:55vh;
+    }
+
+    .map-panel{
+        width:100%;
+        height:45vh;
+    }
+
+    #map{
+        height:45vh;
+    }
+
+    .top-box h2{
+        font-size:48px;
+    }
+}
+
 </style>
+
 </head>
 
 <body>
 
-<div class="wrapper">
+<div class="main-container">
 
-<!-- LEFT -->
-<div class="left">
+    <!-- LEFT SIDE -->
 
-    <div class="card">
-        <b>🚑 Status</b>
-        <div id="status">Loading...</div>
+    <div class="left-panel">
+
+        <!-- ETA -->
+
+        <div class="top-box">
+
+            <h1>🚑 Ambulance Arriving</h1>
+
+            <h2 id="etaText">10 mins</h2>
+
+            <p class="status">
+                Ambulance is on the way to your live location.
+                Stay connected for real-time updates.
+            </p>
+
+        </div>
+
+        <!-- STEPS -->
+
+        <div class="steps">
+
+            <div class="step active">
+
+                <div class="circle">1</div>
+
+                <span>Requested</span>
+
+            </div>
+
+            <div class="line"></div>
+
+            <div class="step active">
+
+                <div class="circle">2</div>
+
+                <span>En Route</span>
+
+            </div>
+
+            <div class="line"></div>
+
+            <div class="step">
+
+                <div class="circle">3</div>
+
+                <span>Arrived</span>
+
+            </div>
+
+            <div class="line"></div>
+
+            <div class="step">
+
+                <div class="circle">4</div>
+
+                <span>Pickup</span>
+
+            </div>
+
+        </div>
+
+        <!-- DRIVER -->
+
+        <div class="driver-card">
+
+            <img
+            src="https://i.pravatar.cc/150?img=12"
+            class="driver-img">
+
+            <h3 id="driverName">Arjun</h3>
+
+            <p class="vehicle" id="vehicleNumber">
+                KA-01-AB-1234
+            </p>
+
+            <p class="driver-phone" id="driverPhone">
+                📞 9876543210
+            </p>
+
+        </div>
+
+        <!-- PATIENT -->
+
+        <div class="patient-card">
+
+            <h3>Patient Information</h3>
+
+            <p>
+                <b>Name:</b>
+                <span id="patientName"></span>
+            </p>
+
+            <p>
+                <b>Phone:</b>
+                <span id="patientPhone"></span>
+            </p>
+
+            <p>
+                <b>Issue:</b> 
+                <span id="issue"></span>
+            </p>
+
+            <p>
+                <b>Hospital:</b>
+                <span id="hospitalName"></span>
+            </p>
+
+            <p>
+                <b>Location:</b>
+                <span id="patientLocation"></span>
+            </p>
+
+        </div>
+
+        <!-- BUTTONS -->
+
+        <div class="buttons">
+
+            <button class="call-btn">
+                Call Driver
+            </button>
+
+            <button class="cancel-btn">
+                Cancel Request
+            </button>
+
+        </div>
+
     </div>
 
-    <div class="card">
-        <b>👤 Patient</b>
-        <div id="patient"></div>
-    </div>
+    <!-- RIGHT SIDE MAP -->
 
-    <div class="card">
-        <b>📍 Pickup</b>
-        <div id="pickup"></div>
-    </div>
+    <div class="map-panel">
 
-    <div class="card">
-        <b>🏥 Hospital</b>
-        <div id="hospital"></div>
-    </div>
+        <div id="map"></div>
 
-    <div class="card">
-        <b>🚑 Ambulance</b>
-        <div id="ambulance"></div>
+        <div class="live-pill">
+            LIVE TRACKING ACTIVE
+        </div>
+
+        <div class="map-overlay">
+
+            <h4>🚑 Smart Tracking Enabled</h4>
+
+            <p>
+                GPS tracking is active with real-time ambulance monitoring.
+            </p>
+
+        </div>
+
     </div>
 
 </div>
-
-<!-- MAP -->
-<div id="map"></div>
-
-</div>
-
-<script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
-<script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
 
 <script>
 
-let map = L.map('map').setView([12.97, 77.59], 13);
+/* GET DATA */
 
-L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-    maxZoom: 19
-}).addTo(map);
+let data = JSON.parse(
+    localStorage.getItem("ambulance_data") || "{}"
+);
 
-let ambulanceIcon = L.icon({
-    iconUrl: "https://cdn-icons-png.flaticon.com/512/2967/2967347.png",
-    iconSize: [40, 40]
-});
+/* FILL DETAILS */
 
+document.getElementById("issue").innerText =
+data.issue || "Emergency Condition";
+
+document.getElementById("patientName").innerText =
+data.name || "Patient";
+
+document.getElementById("patientPhone").innerText =
+data.phone || "Not Available";
+
+document.getElementById("hospitalName").innerText =
+data.hospital.name || "Apollo Hospital";
+
+document.getElementById("patientLocation").innerText =
+data.location || "Bengaluru";
+
+document.getElementById("etaText").innerText =
+data.eta || "10 mins";
+
+/* MAP VARIABLES */
+
+let map;
 let ambulanceMarker;
-let pickupMarker;
+let userMarker;
 
-/* SOCKET CONNECTION */
-const socket = io();
+/* GOOGLE MAP */
 
-/* LIVE TRACKING */
-socket.on("live_update", function(data) {
+function initMap(){
 
-    if (ambulanceMarker) {
-        ambulanceMarker.setLatLng([data.lat, data.lon]);
-        map.panTo([data.lat, data.lon]); // like Ola/Uber tracking
-    }
-});
+    console.log("Latitude:", data.user.lat);
+    console.log("Longitude:", data.user.lon);
+    
+    let userLat = Number(data.user.lat);
+    let userLng = Number(data.user.lon);
+    /* CHECK VALID LOCATION */
 
-/* LOAD DATA */
-function load() {
+    if(!userLat || !userLng){
 
-    let data = JSON.parse(localStorage.getItem("ambulance_data"));
+        alert("Live location not found");
 
-    if (!data) {
-        document.getElementById("status").innerText = "No request found";
         return;
     }
 
-    document.getElementById("patient").innerHTML =
-        `<div class="block">${data.name || "N/A"}</div>`;
+    let userLocation = {
 
-    document.getElementById("pickup").innerHTML =
-        `<div class="block">${data.location || "N/A"}</div>`;
+        lat: userLat,
+        lng: userLng
+    };
 
-    document.getElementById("hospital").innerHTML =
-        `<div class="block">${data.hospital || "Apollo Hospital"}</div>`;
+    /* START AMBULANCE LITTLE FAR */
 
-    document.getElementById("status").innerText = "🚑 Ambulance Assigned";
+    let ambulanceLocation = {
 
-    document.getElementById("ambulance").innerHTML =
-        `🚑 ${data.ambulance || "AMB-101"}`;
+        lat: userLat + 0.02,
+        lng: userLng - 0.02
+    };
 
-    startMap();
+    map = new google.maps.Map(
+
+        document.getElementById("map"),
+
+        {
+            zoom: 14,
+            center: userLocation
+        }
+    );
+
+    /* USER MARKER */
+
+    userMarker = new google.maps.Marker({
+
+        position: userLocation,
+
+        map: map,
+
+        title: "Patient Location",
+
+        icon: {
+            url: "https://maps.google.com/mapfiles/ms/icons/blue-dot.png"
+        }
+    });
+
+    /* AMBULANCE MARKER */
+
+    ambulanceMarker = new google.maps.Marker({
+
+        position: ambulanceLocation,
+
+        map: map,
+
+        title: "Ambulance",
+
+        icon: {
+            url: "https://maps.google.com/mapfiles/kml/shapes/hospitals.png",
+            scaledSize: new google.maps.Size(50,50)
+        }
+    });
+
+    /* ROUTE */
+
+    new google.maps.Polyline({
+
+        path: [
+            ambulanceLocation,
+            userLocation
+        ],
+
+        geodesic: true,
+
+        strokeColor: "#00c2ff",
+
+        strokeOpacity: 1.0,
+
+        strokeWeight: 4,
+
+        map: map
+    });
+
+    /* LIVE MOVEMENT */
+
+    setInterval(() => {
+
+        let currentPos = ambulanceMarker.getPosition();
+
+        let newLat =
+        currentPos.lat() +
+        (userLocation.lat - currentPos.lat()) * 0.03;
+
+        let newLng =
+        currentPos.lng() +
+        (userLocation.lng - currentPos.lng()) * 0.03;
+
+        ambulanceMarker.setPosition({
+
+            lat: newLat,
+            lng: newLng
+        });
+
+    }, 2000);
 }
 
-/* MAP INIT */
-function startMap() {
+/* SOCKET.IO */
 
-    let start = [12.96, 77.58];
-    let end = [12.97, 77.59];
+const socket = io("http://127.0.0.1:5001");
 
-    // ambulance marker
-    ambulanceMarker = L.marker(start, { icon: ambulanceIcon }).addTo(map);
+socket.on("connect", () => {
 
-    // pickup marker (blue circle like Uber)
-    pickupMarker = L.circleMarker(end, {
-        radius: 10,
-        color: "blue",
-        fillColor: "blue",
-        fillOpacity: 0.8
-    }).addTo(map).bindPopup("Pickup Location");
+    console.log("Socket connected");
+});
 
-}
+socket.on("live_update", (res) => {
 
-window.onload = load;
+    console.log("Live update:", res);
+});
+
+socket.on("disconnect", () => {
+
+    console.log("Socket disconnected");
+});
 
 </script>
 
+<script async
+src="https://maps.googleapis.com/maps/api/js?key=AIzaSyD65NI2mHGNm8wTsTXClzwBK9vMyg8HR_M&callback=initMap">
+</script>
+
 </body>
+
 </html>
