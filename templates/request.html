@@ -1,664 +1,514 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-<title>ResQGo - Ambulance Request</title>
-
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-
-<link rel="stylesheet"
-href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-
+<title>ResQGo – Request Ambulance</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
 <style>
-
-*{
-    margin:0;
-    padding:0;
-    box-sizing:border-box;
+:root{
+  --red:#e53935;--orange:#ff6d00;--green:#22c55e;--blue:#3b82f6;
+  --bg:#060d1a;--panel:#0b1629;--card:#0f1e35;--border:rgba(255,255,255,0.08);
 }
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'Space Grotesk',sans-serif;background:var(--bg);color:#e2e8f0;min-height:100vh;}
 
-body{
-
-    font-family:'Poppins',sans-serif;
-
-    background:linear-gradient(
-        135deg,
-        #08162b,
-        #102a4a,
-        #153a66
-    );
-
-    color:white;
-
-    min-height:100vh;
+/* Background grid */
+body::before{
+  content:'';position:fixed;inset:0;
+  background-image:linear-gradient(rgba(255,255,255,0.02) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,0.02) 1px,transparent 1px);
+  background-size:40px 40px;pointer-events:none;z-index:0;
 }
-
-/* NAVBAR */
 
 .navbar{
+  position:relative;z-index:10;
+  display:flex;justify-content:space-between;align-items:center;
+  padding:14px 40px;
+  background:rgba(6,13,26,0.8);
+  border-bottom:1px solid var(--border);
+  backdrop-filter:blur(12px);
+}
+.logo{display:flex;align-items:center;gap:10px;}
+.logo-icon{width:32px;height:32px;background:linear-gradient(135deg,var(--red),var(--orange));border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:17px;}
+.logo-name{font-size:18px;font-weight:700;letter-spacing:-0.3px;}
+.nav-links{display:flex;gap:6px;}
+.nav-link{padding:7px 14px;border-radius:8px;font-size:13px;font-weight:500;color:rgba(255,255,255,0.6);text-decoration:none;transition:all 0.2s;}
+.nav-link:hover{background:rgba(255,255,255,0.06);color:white;}
 
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
+.container{position:relative;z-index:1;max-width:700px;margin:0 auto;padding:40px 20px 60px;}
 
-    padding:18px 60px;
+.page-header{text-align:center;margin-bottom:36px;}
+.page-header h1{font-size:34px;font-weight:700;letter-spacing:-0.5px;margin-bottom:8px;}
+.page-header h1 span{background:linear-gradient(135deg,var(--red),var(--orange));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+.page-header p{color:rgba(255,255,255,0.45);font-size:14px;}
 
-    background:rgba(8,22,43,0.95);
+/* Priority preview banner */
+.priority-preview{
+  border-radius:14px;padding:14px 18px;margin-bottom:20px;
+  display:none;align-items:center;gap:12px;
+  border:1px solid;transition:all 0.3s;
+}
+.priority-preview.critical{background:rgba(239,68,68,0.1);border-color:rgba(239,68,68,0.3);}
+.priority-preview.moderate{background:rgba(251,146,60,0.1);border-color:rgba(251,146,60,0.3);}
+.priority-preview.low{background:rgba(34,197,94,0.1);border-color:rgba(34,197,94,0.3);}
+.pp-icon{font-size:24px;}
+.pp-text{flex:1;}
+.pp-title{font-size:14px;font-weight:700;}
+.pp-sub{font-size:12px;opacity:0.6;margin-top:2px;}
+.pp-delay{font-family:'JetBrains Mono',monospace;font-size:12px;padding:3px 10px;border-radius:6px;background:rgba(255,255,255,0.07);font-weight:600;}
 
-    backdrop-filter:blur(10px);
-
-    border-bottom:1px solid rgba(255,255,255,0.08);
+/* Form card */
+.form-card{
+  background:rgba(15,30,53,0.6);
+  border:1px solid var(--border);
+  border-radius:20px;padding:32px;
+  backdrop-filter:blur(12px);
 }
 
-.logo{
-    font-size:28px;
-    font-weight:700;
-    color:white;
+.section-label{
+  font-size:10px;text-transform:uppercase;letter-spacing:2px;
+  color:rgba(255,255,255,0.3);font-family:'JetBrains Mono',monospace;
+  margin-bottom:16px;padding-bottom:8px;border-bottom:1px solid var(--border);
 }
 
-.nav-links a{
+.field-row{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px;}
+.field-row.single{grid-template-columns:1fr;}
+.input-group{margin-bottom:0;}
+label{display:block;font-size:12px;font-weight:600;color:rgba(255,255,255,0.5);margin-bottom:7px;text-transform:uppercase;letter-spacing:0.8px;}
+.req{color:var(--red);}
+.input-wrap{position:relative;}
+.i-icon{position:absolute;left:14px;top:50%;transform:translateY(-50%);font-size:15px;opacity:0.5;pointer-events:none;}
+.i-icon-top{position:absolute;left:14px;top:15px;font-size:15px;opacity:0.5;pointer-events:none;}
 
-    color:white;
+input,textarea{
+  width:100%;
+  padding:13px 13px 13px 42px;
+  background:rgba(255,255,255,0.05);
+  border:1.5px solid rgba(255,255,255,0.09);
+  border-radius:12px;color:#e2e8f0;
+  font-family:'Space Grotesk',sans-serif;font-size:14px;
+  outline:none;transition:all 0.2s;
+}
+input:focus,textarea:focus{
+  border-color:rgba(229,57,53,0.4);
+  background:rgba(255,255,255,0.07);
+  box-shadow:0 0 0 3px rgba(229,57,53,0.08);
+}
+input::placeholder,textarea::placeholder{color:rgba(255,255,255,0.2);}
+textarea{height:90px;resize:none;padding-top:13px;}
 
-    text-decoration:none;
-
-    margin-left:25px;
-
-    font-weight:600;
-
-    transition:0.3s;
+/* Location box */
+.loc-box{
+  background:rgba(255,255,255,0.04);
+  border:1.5px solid rgba(255,255,255,0.09);
+  border-radius:12px;padding:13px 13px 13px 42px;
+  min-height:52px;font-size:13px;color:rgba(255,255,255,0.7);
+  line-height:1.5;position:relative;
+}
+.loc-icon{position:absolute;left:14px;top:15px;font-size:15px;opacity:0.5;}
+.loc-detecting{color:rgba(255,255,255,0.3);font-style:italic;font-size:13px;}
+.loc-success{color:#4ade80;}
+.gps-badge{
+  display:inline-flex;align-items:center;gap:5px;
+  margin-top:8px;padding:4px 10px;border-radius:6px;
+  background:rgba(34,197,94,0.1);border:1px solid rgba(34,197,94,0.2);
+  font-size:11px;font-weight:600;color:#4ade80;font-family:'JetBrains Mono',monospace;
+}
+.btn-retry{
+  display:inline-flex;align-items:center;gap:5px;
+  margin-top:10px;padding:6px 14px;border-radius:8px;
+  background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);
+  color:rgba(255,255,255,0.6);font-family:'Space Grotesk',sans-serif;
+  font-size:12px;font-weight:600;cursor:pointer;transition:all 0.2s;
+}
+.btn-retry:hover{background:rgba(255,255,255,0.1);}
+.manual-loc-input{
+  margin-top:10px;width:100%;padding:10px 12px;border-radius:8px;
+  border:1px solid rgba(255,255,255,0.1);background:rgba(255,255,255,0.05);
+  color:white;font-family:'Space Grotesk',sans-serif;font-size:13px;outline:none;
 }
 
-.nav-links a:hover{
-    color:#4db8ff;
-}
-
-/* MAIN */
-
-.container{
-
-    width:100%;
-
-    display:flex;
-    justify-content:center;
-    align-items:center;
-
-    padding:45px 20px;
-}
-
-/* FORM BOX */
-
-.form-box{
-
-    width:100%;
-    max-width:760px;
-
-    background:rgba(21,58,102,0.90);
-
-    border-radius:24px;
-
-    padding:40px;
-
-    backdrop-filter:blur(12px);
-
-    box-shadow:0 10px 40px rgba(0,0,0,0.3);
-
-    border:1px solid rgba(255,255,255,0.08);
-}
-
-.form-title{
-
-    text-align:center;
-
-    font-size:34px;
-
-    font-weight:700;
-
-    margin-bottom:10px;
-}
-
-.form-subtitle{
-
-    text-align:center;
-
-    color:#CBD5E1;
-
-    margin-bottom:30px;
-
-    line-height:1.8;
-
-    font-size:15px;
-}
-
-/* INPUTS */
-
-.input-group{
-    margin-bottom:22px;
-}
-
-.input-group label{
-
-    display:block;
-
-    margin-bottom:8px;
-
-    font-size:15px;
-
-    color:#E2E8F0;
-}
-
-.required{
-    color:#ff3b3b;
-    font-weight:bold;
-}
-
-.input-box{
-    position:relative;
-}
-
-.input-box i{
-
-    position:absolute;
-
-    top:18px;
-    left:16px;
-
-    color:#94A3B8;
-}
-
-input,
-textarea{
-
-    width:100%;
-
-    padding:15px 15px 15px 48px;
-
-    border:none;
-
-    border-radius:12px;
-
-    background:#F8FAFC;
-
-    font-size:15px;
-
-    outline:none;
-
-    color:#08162b;
-}
-
-textarea{
-    resize:none;
-    height:120px;
-}
-
-/* LOCATION */
-
-.location-box{
-
-    margin-top:10px;
-
-    background:rgba(255,255,255,0.08);
-
-    padding:15px;
-
-    border-radius:12px;
-
-    color:#dbeafe;
-
-    line-height:1.7;
-}
-
-/* BUTTON */
-
+/* Submit button */
+.submit-section{margin-top:24px;}
 .submit-btn{
-
-    width:100%;
-
-    padding:16px;
-
-    border:none;
-
-    border-radius:14px;
-
-    background:linear-gradient(
-        135deg,
-        #ff2e2e,
-        #ff6a00
-    );
-
-    color:white;
-
-    font-size:17px;
-
-    font-weight:600;
-
-    cursor:pointer;
-
-    transition:0.3s;
-
-    margin-top:10px;
-
-    box-shadow:0 10px 25px rgba(255,80,0,0.3);
+  width:100%;padding:16px;border:none;border-radius:14px;
+  font-size:16px;font-weight:700;letter-spacing:0.3px;
+  background:linear-gradient(135deg,var(--red),var(--orange));color:white;
+  cursor:pointer;transition:all 0.25s;
+  box-shadow:0 6px 24px rgba(229,57,53,0.35);
+  font-family:'Space Grotesk',sans-serif;
 }
+.submit-btn:hover:not(:disabled){transform:translateY(-2px);box-shadow:0 10px 32px rgba(229,57,53,0.5);}
+.submit-btn:disabled{opacity:0.5;cursor:not-allowed;transform:none;}
 
-.submit-btn:hover{
-
-    transform:translateY(-3px);
-
-    box-shadow:0 10px 30px rgba(255,80,0,0.45);
+/* Emergency quick-fill */
+.quick-fills{display:flex;flex-wrap:wrap;gap:7px;margin-top:8px;}
+.quick-btn{
+  padding:5px 12px;border-radius:7px;font-size:12px;font-weight:600;
+  background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.08);
+  color:rgba(255,255,255,0.55);cursor:pointer;transition:all 0.2s;font-family:'Space Grotesk',sans-serif;
 }
+.quick-btn:hover{background:rgba(255,255,255,0.1);color:white;}
+.quick-btn.critical{border-color:rgba(239,68,68,0.25);color:#f87171;}
+.quick-btn.critical:hover{background:rgba(239,68,68,0.1);}
+.quick-btn.moderate{border-color:rgba(251,146,60,0.25);color:#fb923c;}
+.quick-btn.moderate:hover{background:rgba(251,146,60,0.1);}
 
-/* OUTPUT */
+/* Divider */
+.divider{border:none;border-top:1px solid var(--border);margin:22px 0;}
 
-#output{
-
-    margin-top:20px;
-
-    text-align:center;
-
-    font-size:15px;
-
-    line-height:1.8;
-
-    color:#FFD166;
+/* FULL-PAGE OVERLAY */
+.fullpage-overlay{
+  display:none;position:fixed;inset:0;
+  background:#060d1a;z-index:9999;
+  flex-direction:column;align-items:center;justify-content:center;gap:22px;
 }
+.fullpage-overlay.show{display:flex;}
+.pulse-wrap{position:relative;width:120px;height:120px;}
+.pulse-ring{position:absolute;inset:0;border-radius:50%;border:2px solid rgba(229,57,53,0.45);animation:pulseOut 1.7s ease-out infinite;}
+.pulse-ring:nth-child(2){animation-delay:0.57s;}
+.pulse-ring:nth-child(3){animation-delay:1.14s;}
+@keyframes pulseOut{0%{transform:scale(0.3);opacity:1;}100%{transform:scale(2.2);opacity:0;}}
+.amb-bounce{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);font-size:44px;animation:bobFloat 0.9s ease-in-out infinite alternate;}
+@keyframes bobFloat{from{transform:translate(-50%,-50%) scale(0.88);}to{transform:translate(-50%,-58%) scale(1.08);}}
+.ov-title{font-size:24px;font-weight:700;text-align:center;}
+.ov-sub{font-size:13px;color:rgba(255,255,255,0.4);text-align:center;max-width:300px;}
+.ov-priority{padding:5px 18px;border-radius:20px;font-size:12px;font-weight:700;}
+.prog-wrap{width:320px;height:6px;background:rgba(255,255,255,0.07);border-radius:6px;overflow:hidden;}
+.prog-fill{height:100%;background:linear-gradient(90deg,var(--red),var(--orange));border-radius:6px;width:0;}
+.step-list{display:flex;flex-direction:column;gap:12px;width:290px;}
+.step{display:flex;align-items:center;gap:12px;font-size:13px;color:rgba(255,255,255,0.3);transition:color 0.4s;}
+.step.active{color:white;}
+.step.done{color:#22c55e;}
+.sdot{width:9px;height:9px;border-radius:50%;background:rgba(255,255,255,0.12);flex-shrink:0;}
+.step.active .sdot{background:var(--orange);animation:dotPulse 0.7s infinite alternate;}
+.step.done .sdot{background:#22c55e;}
+@keyframes dotPulse{from{transform:scale(1);}to{transform:scale(1.7);}}
 
-/* COPYRIGHT */
+.p-critical{background:rgba(239,68,68,0.15);color:#f87171;border:1px solid rgba(239,68,68,0.3);}
+.p-moderate{background:rgba(251,146,60,0.15);color:#fb923c;border:1px solid rgba(251,146,60,0.3);}
+.p-low{background:rgba(34,197,94,0.15);color:#4ade80;border:1px solid rgba(34,197,94,0.3);}
 
-.copyright{
-
-    text-align:center;
-
-    padding:18px;
-
-    color:#9fb8da;
-
-    font-size:13px;
-
-    background:#04101f;
-
-    margin-top:40px;
+@media(max-width:600px){
+  .field-row{grid-template-columns:1fr;}
+  .navbar{padding:12px 16px;}
+  .form-card{padding:20px;}
+  .container{padding:20px 12px 40px;}
 }
-
-/* MOBILE */
-
-@media(max-width:768px){
-
-    .navbar{
-        padding:18px 20px;
-    }
-
-    .nav-links{
-        display:none;
-    }
-
-    .form-box{
-        padding:28px;
-    }
-
-    .form-title{
-        font-size:28px;
-    }
-}
-
 </style>
-
 </head>
-
 <body>
 
-<!-- NAVBAR -->
-
-<div class="navbar">
-
-    <div class="logo">
-        🚑 ResQGo
-    </div>
-
-    <div class="nav-links">
-
-        <a href="/">Home</a>
-
-        <a href="/dashboard">Dashboard</a>
-
-    </div>
-
-</div>
-
-<!-- MAIN -->
+<nav class="navbar">
+  <div class="logo">
+    <div class="logo-icon">🚑</div>
+    <div class="logo-name">ResQGo</div>
+  </div>
+  <div class="nav-links">
+    <a href="/" class="nav-link">Home</a>
+    <a href="/dashboard" class="nav-link">Dashboard</a>
+    <a href="/history" class="nav-link">History</a>
+  </div>
+</nav>
 
 <div class="container">
+  <div class="page-header">
+    <h1>🚑 <span>Emergency</span> Request</h1>
+    <p>Smart dispatch finds the nearest ambulance matched to your emergency type</p>
+  </div>
 
-    <div class="form-box">
+  <!-- Priority preview (shown as user types issue) -->
+  <div class="priority-preview" id="priorityPreview">
+    <div class="pp-icon" id="ppIcon">🔴</div>
+    <div class="pp-text">
+      <div class="pp-title" id="ppTitle">Critical Emergency Detected</div>
+      <div class="pp-sub" id="ppSub">ICU ambulance will be dispatched immediately</div>
+    </div>
+    <div class="pp-delay" id="ppDelay">~5s</div>
+  </div>
 
-        <div class="form-title">
-            Emergency Ambulance Request
+  <div class="form-card">
+    <div class="section-label">Patient Information</div>
+    <div class="field-row">
+      <div class="input-group">
+        <label>Patient Name <span class="req">*</span></label>
+        <div class="input-wrap">
+          <span class="i-icon">👤</span>
+          <input id="name" placeholder="Full name" autocomplete="name">
         </div>
-
-        <div class="form-subtitle">
-            Enter patient details below to request the nearest available ambulance.
+      </div>
+      <div class="input-group">
+        <label>Phone Number <span class="req">*</span></label>
+        <div class="input-wrap">
+          <span class="i-icon">📞</span>
+          <input id="phone" placeholder="10-digit number" maxlength="10" type="tel">
         </div>
-
-        <!-- NAME -->
-
-        <div class="input-group">
-
-            <label>
-                Patient Name <span class="required">*</span>
-            </label>
-
-            <div class="input-box">
-
-                <i class="fa-solid fa-user"></i>
-
-                <input
-                type="text"
-                id="name"
-                placeholder="Enter patient name">
-
-            </div>
-
+      </div>
+    </div>
+    <div class="field-row single" style="margin-bottom:16px;">
+      <div class="input-group">
+        <label>Email (optional)</label>
+        <div class="input-wrap">
+          <span class="i-icon">✉️</span>
+          <input id="email" placeholder="For receipt / confirmation" type="email">
         </div>
-
-        <!-- PHONE -->
-
-        <div class="input-group">
-
-            <label>
-                Phone Number <span class="required">*</span>
-            </label>
-
-            <div class="input-box">
-
-                <i class="fa-solid fa-phone"></i>
-
-                <input
-                type="text"
-                id="phone"
-                placeholder="Enter 10-digit mobile number">
-
-            </div>
-
-        </div>
-
-        <!-- EMAIL -->
-
-        <div class="input-group">
-
-            <label>
-                Email Address <span class="required">*</span>
-            </label>
-
-            <div class="input-box">
-
-                <i class="fa-solid fa-envelope"></i>
-
-                <input
-                type="email"
-                id="email"
-                placeholder="Enter Gmail address">
-
-            </div>
-
-        </div>
-
-        <!-- ISSUE -->
-
-        <div class="input-group">
-
-            <label>
-                Health Issue <span class="required">*</span>
-            </label>
-
-            <div class="input-box">
-
-                <i class="fa-solid fa-heart-pulse"></i>
-
-                <textarea
-                id="issue"
-                placeholder="Describe emergency condition"></textarea>
-
-            </div>
-
-        </div>
-
-        <!-- LOCATION -->
-
-        <div class="input-group">
-
-            <label>Live Location</label>
-
-            <div class="location-box" id="location">
-                Detecting your live location...
-            </div>
-
-        </div>
-
-        <!-- BUTTON -->
-
-        <button class="submit-btn" onclick="sendRequest()">
-
-            Request Ambulance 🚑
-
-        </button>
-
-        <div id="output"></div>
-
+      </div>
     </div>
 
+    <hr class="divider">
+    <div class="section-label">Emergency Details</div>
+
+    <div class="field-row single" style="margin-bottom:8px;">
+      <div class="input-group">
+        <label>Describe Emergency <span class="req">*</span></label>
+        <div class="input-wrap">
+          <span class="i-icon-top">🩺</span>
+          <textarea id="issue" placeholder="Describe the emergency — e.g. heart attack, accident, severe breathing difficulty..." oninput="detectPriority(this.value)"></textarea>
+        </div>
+      </div>
+    </div>
+
+    <!-- Quick-fill buttons -->
+    <div class="quick-fills">
+      <span style="font-size:11px;color:rgba(255,255,255,0.25);display:flex;align-items:center;">Quick fill:</span>
+      <button class="quick-btn critical" onclick="fillIssue('Cardiac arrest / heart attack')">❤️ Heart Attack</button>
+      <button class="quick-btn critical" onclick="fillIssue('Major road accident with trauma and bleeding')">🚗 Accident</button>
+      <button class="quick-btn critical" onclick="fillIssue('Patient unconscious, not breathing')">😵 Unconscious</button>
+      <button class="quick-btn critical" onclick="fillIssue('Stroke - sudden paralysis and speech difficulty')">🧠 Stroke</button>
+      <button class="quick-btn moderate" onclick="fillIssue('High fever with severe vomiting')">🤒 Fever</button>
+      <button class="quick-btn moderate" onclick="fillIssue('Fracture / broken bone from fall')">🦴 Fracture</button>
+      <button class="quick-btn moderate" onclick="fillIssue('Severe abdominal pain, possible appendix')">🫁 Abdomen</button>
+      <button class="quick-btn" onclick="fillIssue('Mild cough and cold with body ache')">🤧 Cold/Cough</button>
+    </div>
+
+    <hr class="divider">
+    <div class="section-label">Location</div>
+
+    <div style="position:relative;">
+      <span class="loc-icon">📍</span>
+      <div class="loc-box" id="locationBox">
+        <span class="loc-detecting">📡 Detecting your GPS location...</span>
+      </div>
+    </div>
+
+    <div class="submit-section">
+      <button class="submit-btn" id="submitBtn" onclick="sendRequest()">
+        🚑 Request Emergency Ambulance
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- Full-page searching overlay -->
+<div class="fullpage-overlay" id="fullOverlay">
+  <div class="pulse-wrap">
+    <div class="pulse-ring"></div><div class="pulse-ring"></div><div class="pulse-ring"></div>
+    <div class="amb-bounce">🚑</div>
+  </div>
+  <div class="ov-title" id="ovTitle">Dispatching Emergency Unit...</div>
+  <div class="ov-sub"   id="ovSub">Analyzing emergency type</div>
+  <div id="ovPriority"></div>
+  <div class="prog-wrap"><div class="prog-fill" id="progFill"></div></div>
+  <div class="step-list">
+    <div class="step" id="st1"><div class="sdot"></div>Detecting patient GPS location</div>
+    <div class="step" id="st2"><div class="sdot"></div>Calculating nearest ambulances by distance</div>
+    <div class="step" id="st3"><div class="sdot"></div>Matching hospital by emergency type</div>
+    <div class="step" id="st4"><div class="sdot"></div>Confirming driver & finalizing dispatch</div>
+  </div>
 </div>
 
 <script>
+let detectedAddress = null;
+window.userLat = null;
+window.userLon = null;
+let locationReady = false;
 
-/* LOCATION */
+// Priority detection keywords (client-side preview)
+const CRITICAL_KW = ["heart attack","cardiac","chest pain","stroke","unconscious","not breathing","accident","crash","trauma","head injury","seizure","overdose","bleeding","burn","paralysis"];
+const MODERATE_KW = ["fever","vomiting","pain","fall","injury","dizziness","faint","appendix","fracture","asthma","allergy","infection","diabetic","abdominal","back pain","labor","pregnancy"];
 
-let detectedAddress = "";
+function detectPriority(text) {
+  let t = text.toLowerCase();
+  let preview = document.getElementById("priorityPreview");
+  let pi = document.getElementById("ppIcon"), pt = document.getElementById("ppTitle"), ps = document.getElementById("ppSub"), pd = document.getElementById("ppDelay");
 
-function getLocation(){
+  if(t.length < 4) { preview.style.display = "none"; return; }
 
-    if(!navigator.geolocation){
-
-        document.getElementById("location").innerHTML =
-        "Geolocation not supported.";
-
-        return;
-    }
-
-    navigator.geolocation.getCurrentPosition(
-
-        async function(position){
-
-            window.userLat = position.coords.latitude;
-            window.userLon = position.coords.longitude;
-
-            try{
-
-                let res = await fetch(
-
-                    `https://nominatim.openstreetmap.org/reverse?format=json&lat=${window.userLat}&lon=${window.userLon}&accept-language=en`
-
-                );
-
-                let data = await res.json();
-
-                let address = data.address;
-
-                detectedAddress =
-                    (address.suburb ||
-                    address.neighbourhood ||
-                    address.village ||
-                    "Vittasandra")
-                    + ", " +
-                    (address.city ||
-                    "Bengaluru")
-                    + ", " +
-                    (address.state ||
-                    "Karnataka");
-
-                document.getElementById("location").innerHTML =
-                detectedAddress;
-
-            }
-
-            catch(error){
-
-                document.getElementById("location").innerHTML =
-                "Unable to fetch location.";
-            }
-
-        },
-
-        function(){
-
-            document.getElementById("location").innerHTML =
-            "Please allow GPS access.";
-
-        },
-
-        {
-            enableHighAccuracy:true,
-            timeout:10000,
-            maximumAge:0
-        }
-
-    );
+  if(CRITICAL_KW.some(kw => t.includes(kw))) {
+    preview.className = "priority-preview critical";
+    pi.innerText = "🔴"; pt.innerText = "Critical Emergency Detected";
+    ps.innerText = "ICU Ambulance dispatched with priority routing";
+    pd.innerText = "~5s";
+  } else if(MODERATE_KW.some(kw => t.includes(kw))) {
+    preview.className = "priority-preview moderate";
+    pi.innerText = "🟠"; pt.innerText = "Moderate Emergency";
+    ps.innerText = "Advanced Life Support unit assigned";
+    pd.innerText = "~22s";
+  } else {
+    preview.className = "priority-preview low";
+    pi.innerText = "🟢"; pt.innerText = "Non-Critical Case";
+    ps.innerText = "Nearest available ambulance dispatched";
+    pd.innerText = "~50s";
+  }
+  preview.style.display = "flex";
 }
 
+function fillIssue(text) {
+  document.getElementById("issue").value = text;
+  detectPriority(text);
+}
+
+// GPS location
 window.onload = getLocation;
 
-/* VALIDATIONS */
-
-function validatePhone(phone){
-
-    return /^[0-9]{10}$/.test(phone);
+function buildAddress(a) {
+  let parts = [];
+  let road = a.road || a.pedestrian || a.footway || "";
+  if(road) parts.push(road);
+  let suburb = a.neighbourhood || a.suburb || a.quarter || "";
+  if(suburb) parts.push(suburb);
+  let city = a.city || a.town || a.village || a.county || "";
+  if(city) parts.push(city);
+  let state = a.state || ""; let pin = a.postcode || "";
+  if(state && pin) parts.push(state + " " + pin);
+  else if(state) parts.push(state);
+  return parts.join(", ");
 }
 
-function validateEmail(email){
-
-    return /^[a-zA-Z0-9._%+-]+@gmail\.com$/.test(email);
-}
-
-/* SEND REQUEST */
-
-function sendRequest(){
-
-    let name =
-    document.getElementById("name").value.trim();
-
-    let phone =
-    document.getElementById("phone").value.trim();
-
-    let email =
-    document.getElementById("email").value.trim();
-
-    let issue =
-    document.getElementById("issue").value.trim();
-
-    if(!name || !phone || !email || !issue){
-
-        document.getElementById("output").innerHTML =
-        "⚠ Please fill all fields.";
-
-        return;
-    }
-
-    if(!validatePhone(phone)){
-
-        document.getElementById("output").innerHTML =
-        "⚠ Enter valid 10-digit phone number.";
-
-        return;
-    }
-
-    if(!validateEmail(email)){
-
-        document.getElementById("output").innerHTML =
-        "⚠ Enter valid Gmail address.";
-
-        return;
-    }
-
-    if(window.userLat === undefined){
-
-        document.getElementById("output").innerHTML =
-        "⚠ GPS loading... please wait.";
-
-        return;
-    }
-
-    let data = {
-
-        name:name,
-        phone:phone,
-        email:email,
-        issue:issue,
-
-        location:detectedAddress,
-
-        lat:window.userLat,
-        lon:window.userLon
-    };
-
-    fetch("http://127.0.0.1:5001/request", {
-
-        method:"POST",
-
-        headers:{
-            "Content-Type":"application/json"
-        },
-
-        body:JSON.stringify(data)
-
-    })
-
-    .then(response => response.json())
-
-    .then(result => {
-
-        if(result.error){
-
-            document.getElementById("output").innerHTML =
-            "❌ " + result.error;
-
-            return;
-        }
-
-        localStorage.setItem(
-            "ambulance_data",
-            JSON.stringify(result)
+async function getLocation() {
+  const box = document.getElementById("locationBox");
+  if(!navigator.geolocation) { box.innerHTML = "GPS not supported on this device."; return; }
+  navigator.geolocation.getCurrentPosition(
+    async (pos) => {
+      window.userLat = pos.coords.latitude;
+      window.userLon = pos.coords.longitude;
+      box.innerHTML = `<span class="loc-detecting">📡 Resolving address from GPS...</span>`;
+      try {
+        let res = await fetch(
+          `https://nominatim.openstreetmap.org/reverse?format=json&lat=${window.userLat}&lon=${window.userLon}&zoom=18&addressdetails=1`,
+          { headers:{"Accept-Language":"en"} }
         );
-
-        document.getElementById("output").innerHTML =
-        "✅ Ambulance assigned successfully...";
-
-        setTimeout(() => {
-
-            window.location.href = "/dashboard";
-
-        }, 1800);
-
-    })
-
-    .catch(error => {
-
-        console.log(error);
-
-        document.getElementById("output").innerHTML =
-        "❌ Server connection failed.";
-
-    });
-
+        let data = await res.json();
+        detectedAddress = buildAddress(data.address || {});
+        if(!detectedAddress || detectedAddress.length < 5)
+          detectedAddress = (data.display_name||"").split(",").slice(0,3).join(",").trim();
+        if(!detectedAddress || detectedAddress.length < 5)
+          detectedAddress = "Current GPS Location";
+        locationReady = true;
+        box.innerHTML = `
+          <strong class="loc-success">✅ ${detectedAddress}</strong>
+          <div class="gps-badge">📡 GPS · ${window.userLat.toFixed(5)}, ${window.userLon.toFixed(5)}</div>`;
+      } catch(e) {
+        detectedAddress = `GPS (${window.userLat.toFixed(5)}, ${window.userLon.toFixed(5)})`;
+        locationReady = true;
+        box.innerHTML = `<strong class="loc-success">✅ ${detectedAddress}</strong>`;
+      }
+    },
+    () => {
+      detectedAddress = null; window.userLat = null; window.userLon = null;
+      box.innerHTML = `
+        <div style="color:#f87171;font-size:13px;">⚠️ GPS access denied</div>
+        <input class="manual-loc-input" id="manualLoc" placeholder="Type your location (e.g. Koramangala, Bangalore)"
+          oninput="detectedAddress=this.value;locationReady=this.value.length>3;">
+        <button class="btn-retry" onclick="retryGPS()">🔄 Retry GPS</button>`;
+    },
+    { enableHighAccuracy:true, timeout:12000, maximumAge:0 }
+  );
 }
 
+function retryGPS() {
+  document.getElementById("locationBox").innerHTML = `<span class="loc-detecting">📡 Retrying GPS...</span>`;
+  detectedAddress = null; window.userLat = null; window.userLon = null; locationReady = false;
+  getLocation();
+}
+
+function setStep(n) {
+  for(let i=1;i<=4;i++) {
+    let el = document.getElementById("st"+i);
+    el.className = "step" + (i<n?" done":i===n?" active":"");
+  }
+}
+
+function sendRequest() {
+  let name  = document.getElementById("name").value.trim();
+  let phone = document.getElementById("phone").value.trim();
+  let issue = document.getElementById("issue").value.trim();
+
+  if(!name)  { alert("Please enter patient name."); return; }
+  if(!phone || !/^[0-9]{10}$/.test(phone)) { alert("Please enter a valid 10-digit phone number."); return; }
+  if(!issue) { alert("Please describe the emergency."); return; }
+  if(!locationReady && !detectedAddress) { alert("Location not ready. Please wait or enter manually."); return; }
+
+  document.getElementById("submitBtn").disabled = true;
+
+  let payload = {
+    name, phone,
+    email:    document.getElementById("email").value.trim(),
+    issue,
+    location: detectedAddress || "Unknown Location",
+    lat:      window.userLat,
+    lon:      window.userLon
+  };
+
+  fetch("/request_ambulance", {
+    method:"POST",
+    headers:{"Content-Type":"application/json"},
+    body:JSON.stringify(payload)
+  })
+  .then(r => { if(!r.ok) throw new Error("HTTP "+r.status); return r.json(); })
+  .then(res => {
+    if(!res.success) throw new Error(res.error || "Request failed");
+
+    // Save to history
+    let history = [];
+    try { history = JSON.parse(localStorage.getItem("resqgo_history")||"[]"); } catch(e) {}
+    history.unshift({...res, timestamp: new Date().toISOString()});
+    localStorage.setItem("resqgo_history", JSON.stringify(history.slice(0,30)));
+    localStorage.setItem("ambulance_data", JSON.stringify(res));
+
+    let delay    = (res.search_delay || 8) * 1000;
+    let priority = res.priority || "moderate";
+
+    // Show overlay
+    document.getElementById("fullOverlay").classList.add("show");
+
+    // Overlay text
+    let titles = { critical:"🚨 Dispatching Emergency Unit", moderate:"🔍 Finding Best Available Unit", low:"🔎 Locating Nearest Ambulance" };
+    let subs   = {
+      critical:"ICU ambulance dispatching with priority routing — nearest: " + (res.driver_dist_km||"?") + " km away",
+      moderate:"Assigning Advanced Life Support unit — scanning nearby drivers",
+      low:     "Checking available ambulances in your area"
+    };
+    document.getElementById("ovTitle").innerText = titles[priority] || titles.moderate;
+    document.getElementById("ovSub").innerText   = subs[priority]   || subs.moderate;
+
+    let pillCls  = "ov-priority p-"+priority;
+    let pillText = priority==="critical" ? "🔴 CRITICAL — ICU Dispatch" :
+                   priority==="moderate" ? "🟠 MODERATE — ALS Dispatch" : "🟢 LOW — Standard Dispatch";
+    document.getElementById("ovPriority").innerHTML = `<div class="${pillCls}">${pillText}</div>`;
+
+    // Steps
+    setStep(1);
+    setTimeout(()=>setStep(2), delay*0.2);
+    setTimeout(()=>setStep(3), delay*0.52);
+    setTimeout(()=>setStep(4), delay*0.82);
+
+    // Progress bar
+    let barStart = Date.now();
+    let barIv = setInterval(() => {
+      let pct = Math.min(100, ((Date.now()-barStart)/delay)*100);
+      document.getElementById("progFill").style.width = pct+"%";
+      if(pct >= 100) clearInterval(barIv);
+    }, 100);
+
+    setTimeout(() => { window.location.href = "/dashboard"; }, delay);
+  })
+  .catch(err => {
+    console.error(err);
+    alert("Error submitting request: " + err.message);
+    document.getElementById("submitBtn").disabled = false;
+  });
+}
 </script>
-
-<div class="copyright">
-    © 2026 ResQGo. All Rights Reserved.
-</div>
-
 </body>
 </html>

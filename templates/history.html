@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ResQGo – History</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --red:#e53935;--orange:#ff6d00;--green:#22c55e;
+  --bg:#060d1a;--panel:#0b1629;--card:#0f1e35;--border:rgba(255,255,255,0.07);
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'Space Grotesk',sans-serif;background:var(--bg);color:#e2e8f0;min-height:100vh;}
+
+body::before{
+  content:'';position:fixed;inset:0;
+  background-image:linear-gradient(rgba(255,255,255,0.015) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,0.015) 1px,transparent 1px);
+  background-size:40px 40px;pointer-events:none;z-index:0;
+}
+
+.navbar{
+  position:relative;z-index:10;
+  display:flex;justify-content:space-between;align-items:center;
+  padding:14px 40px;background:rgba(6,13,26,0.85);
+  border-bottom:1px solid var(--border);backdrop-filter:blur(12px);
+}
+.logo{display:flex;align-items:center;gap:10px;}
+.logo-icon{width:32px;height:32px;background:linear-gradient(135deg,var(--red),var(--orange));border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:17px;}
+.logo-name{font-size:18px;font-weight:700;letter-spacing:-0.3px;}
+.nav-links{display:flex;gap:6px;}
+.nav-link{padding:7px 14px;border-radius:8px;font-size:13px;font-weight:500;color:rgba(255,255,255,0.6);text-decoration:none;transition:all 0.2s;}
+.nav-link:hover,.nav-link.active{background:rgba(255,255,255,0.07);color:white;}
+
+.container{position:relative;z-index:1;max-width:860px;margin:0 auto;padding:36px 20px 60px;}
+
+.page-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:28px;flex-wrap:wrap;gap:12px;}
+.page-header h1{font-size:28px;font-weight:700;letter-spacing:-0.3px;}
+.page-header h1 span{color:rgba(255,255,255,0.35);font-size:16px;font-weight:400;margin-left:8px;font-family:'JetBrains Mono',monospace;}
+.header-actions{display:flex;gap:10px;flex-wrap:wrap;}
+
+.btn{padding:9px 18px;border:none;border-radius:10px;font-weight:600;cursor:pointer;font-family:'Space Grotesk',sans-serif;font-size:13px;transition:all 0.2s;text-decoration:none;display:inline-flex;align-items:center;gap:6px;}
+.btn-danger{background:rgba(239,68,68,0.12);color:#f87171;border:1px solid rgba(239,68,68,0.25);}
+.btn-danger:hover{background:rgba(239,68,68,0.2);}
+.btn-primary{background:linear-gradient(135deg,var(--red),var(--orange));color:white;box-shadow:0 4px 14px rgba(229,57,53,0.3);}
+.btn-primary:hover{box-shadow:0 6px 20px rgba(229,57,53,0.4);}
+.btn-ghost{background:rgba(255,255,255,0.05);color:rgba(255,255,255,0.6);border:1px solid var(--border);}
+.btn-ghost:hover{background:rgba(255,255,255,0.09);color:white;}
+
+/* Stats row */
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:24px;}
+.stat{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:14px;text-align:center;}
+.stat-num{font-size:28px;font-weight:700;font-family:'JetBrains Mono',monospace;}
+.stat-label{font-size:10px;text-transform:uppercase;letter-spacing:1px;color:rgba(255,255,255,0.35);margin-top:3px;}
+.stat-num.red{color:#f87171;}
+.stat-num.orange{color:#fb923c;}
+.stat-num.green{color:#4ade80;}
+.stat-num.yellow{color:#fbbf24;}
+
+/* History cards */
+.history-card{
+  background:var(--card);border:1px solid var(--border);
+  border-radius:18px;padding:22px;margin-bottom:14px;
+  transition:border-color 0.2s;position:relative;overflow:hidden;
+}
+.history-card:hover{border-color:rgba(255,255,255,0.12);}
+.history-card::before{
+  content:'';position:absolute;left:0;top:0;bottom:0;width:4px;border-radius:18px 0 0 18px;
+}
+.hc-critical::before{background:linear-gradient(180deg,#ef4444,#dc2626);}
+.hc-moderate::before{background:linear-gradient(180deg,#f59e0b,#d97706);}
+.hc-low::before{background:linear-gradient(180deg,#22c55e,#16a34a);}
+.hc-unknown::before{background:rgba(255,255,255,0.1);}
+
+/* Card header */
+.card-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:14px;flex-wrap:wrap;gap:8px;}
+.card-id{font-family:'JetBrains Mono',monospace;font-size:10px;color:rgba(255,255,255,0.25);}
+.card-time{font-size:11px;color:rgba(255,255,255,0.35);font-family:'JetBrains Mono',monospace;}
+.badge-row{display:flex;gap:6px;flex-wrap:wrap;align-items:center;}
+.badge{padding:3px 10px;border-radius:6px;font-size:11px;font-weight:700;}
+.b-critical{background:rgba(239,68,68,0.12);color:#f87171;border:1px solid rgba(239,68,68,0.25);}
+.b-moderate{background:rgba(251,146,60,0.12);color:#fb923c;border:1px solid rgba(251,146,60,0.25);}
+.b-low{background:rgba(34,197,94,0.12);color:#4ade80;border:1px solid rgba(34,197,94,0.25);}
+.b-status{background:rgba(255,255,255,0.06);color:rgba(255,255,255,0.6);border:1px solid var(--border);}
+.b-completed{background:rgba(34,197,94,0.1);color:#4ade80;border:1px solid rgba(34,197,94,0.2);}
+.b-cancelled{background:rgba(239,68,68,0.08);color:#f87171;border:1px solid rgba(239,68,68,0.15);}
+
+/* Card grid */
+.card-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-bottom:14px;}
+.card-field{background:rgba(255,255,255,0.03);border-radius:10px;padding:11px 13px;border:1px solid rgba(255,255,255,0.04);}
+.cf-label{font-size:10px;color:rgba(255,255,255,0.3);text-transform:uppercase;letter-spacing:0.8px;margin-bottom:4px;}
+.cf-val{font-size:13px;font-weight:600;color:#e2e8f0;line-height:1.3;}
+.cf-sub{font-size:11px;color:rgba(255,255,255,0.4);margin-top:2px;}
+
+/* Hospital specialty tags */
+.spec-tags{display:flex;flex-wrap:wrap;gap:4px;margin-top:5px;}
+.spec-tag{padding:2px 7px;border-radius:4px;font-size:10px;font-weight:600;background:rgba(59,130,246,0.1);color:#93c5fd;border:1px solid rgba(59,130,246,0.15);}
+
+/* Rating stars */
+.rating-display{display:flex;align-items:center;gap:4px;margin-top:4px;}
+.rs{font-size:14px;}
+
+/* Card footer */
+.card-footer{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;padding-top:14px;border-top:1px solid var(--border);}
+.dist-info{font-family:'JetBrains Mono',monospace;font-size:11px;color:rgba(255,255,255,0.3);display:flex;gap:14px;}
+.dist-item{display:flex;align-items:center;gap:5px;}
+
+/* Empty state */
+.empty{
+  text-align:center;padding:80px 20px;
+  background:var(--card);border:1px solid var(--border);border-radius:20px;
+}
+.empty-icon{font-size:56px;margin-bottom:16px;opacity:0.5;}
+.empty-title{font-size:22px;font-weight:700;margin-bottom:8px;}
+.empty-sub{color:rgba(255,255,255,0.4);font-size:14px;margin-bottom:24px;}
+
+/* Filter tabs */
+.filters{display:flex;gap:8px;margin-bottom:20px;flex-wrap:wrap;}
+.filter-btn{padding:6px 16px;border-radius:8px;font-size:12px;font-weight:600;cursor:pointer;transition:all 0.2s;border:1px solid var(--border);background:rgba(255,255,255,0.04);color:rgba(255,255,255,0.5);font-family:'Space Grotesk',sans-serif;}
+.filter-btn.active{background:rgba(255,255,255,0.09);color:white;border-color:rgba(255,255,255,0.15);}
+.filter-btn:hover{background:rgba(255,255,255,0.07);}
+
+@media(max-width:640px){
+  .stats{grid-template-columns:1fr 1fr;}
+  .card-grid{grid-template-columns:1fr 1fr;}
+  .navbar{padding:12px 16px;}
+}
+@media(max-width:440px){
+  .card-grid{grid-template-columns:1fr;}
+  .stats{grid-template-columns:1fr 1fr;}
+}
+</style>
+</head>
+<body>
+
+<nav class="navbar">
+  <div class="logo">
+    <div class="logo-icon">🚑</div>
+    <div class="logo-name">ResQGo</div>
+  </div>
+  <div class="nav-links">
+    <a href="/" class="nav-link">Home</a>
+    <a href="/request" class="nav-link">New Request</a>
+    <a href="/history" class="nav-link active">History</a>
+  </div>
+</nav>
+
+<div class="container">
+  <div class="page-header">
+    <div>
+      <h1>Request History <span id="countLabel"></span></h1>
+    </div>
+    <div class="header-actions">
+      <button class="btn btn-danger" onclick="clearAll()">🗑️ Clear All</button>
+      <a href="/request" class="btn btn-primary">🚑 New Request</a>
+    </div>
+  </div>
+
+  <!-- Stats row -->
+  <div class="stats" id="statsRow" style="display:none;">
+    <div class="stat"><div class="stat-num" id="totalCount">0</div><div class="stat-label">Total Requests</div></div>
+    <div class="stat"><div class="stat-num red" id="criticalCount">0</div><div class="stat-label">Critical</div></div>
+    <div class="stat"><div class="stat-num green" id="completedCount">0</div><div class="stat-label">Completed</div></div>
+    <div class="stat"><div class="stat-num yellow" id="avgRating">—</div><div class="stat-label">Avg Rating</div></div>
+  </div>
+
+  <!-- Filter tabs -->
+  <div class="filters" id="filterRow" style="display:none;">
+    <button class="filter-btn active" onclick="setFilter('all',this)">All</button>
+    <button class="filter-btn" onclick="setFilter('critical',this)">🔴 Critical</button>
+    <button class="filter-btn" onclick="setFilter('moderate',this)">🟠 Moderate</button>
+    <button class="filter-btn" onclick="setFilter('low',this)">🟢 Low</button>
+    <button class="filter-btn" onclick="setFilter('Completed',this)">✅ Completed</button>
+    <button class="filter-btn" onclick="setFilter('Cancelled',this)">✕ Cancelled</button>
+  </div>
+
+  <div id="historyList"></div>
+</div>
+
+<script>
+let currentFilter = "all";
+
+function getHistory() {
+  try { return JSON.parse(localStorage.getItem("resqgo_history")||"[]"); } catch(e) { return []; }
+}
+function saveHistory(arr) {
+  localStorage.setItem("resqgo_history", JSON.stringify(arr));
+}
+
+function deleteItem(i) {
+  if(!confirm("Delete this record?")) return;
+  let h = getHistory();
+  h.splice(i, 1);
+  saveHistory(h);
+  render();
+}
+
+function clearAll() {
+  if(!confirm("Delete all history? This cannot be undone.")) return;
+  localStorage.removeItem("resqgo_history");
+  render();
+}
+
+function setFilter(f, btn) {
+  currentFilter = f;
+  document.querySelectorAll(".filter-btn").forEach(b => b.classList.remove("active"));
+  btn.classList.add("active");
+  render();
+}
+
+function timeAgo(ts) {
+  let diff = (Date.now() - new Date(ts)) / 1000;
+  if(diff < 60)   return "Just now";
+  if(diff < 3600) return Math.floor(diff/60) + "m ago";
+  if(diff < 86400)return Math.floor(diff/3600) + "h ago";
+  return Math.floor(diff/86400) + "d ago";
+}
+
+function formatTime(ts) {
+  return new Date(ts).toLocaleString("en-IN", { day:"2-digit", month:"short", year:"numeric", hour:"2-digit", minute:"2-digit" });
+}
+
+function starStr(rating) {
+  if(!rating) return "";
+  let filled = "⭐".repeat(rating);
+  let empty  = "☆".repeat(5-rating);
+  return filled + empty;
+}
+
+function render() {
+  let all  = getHistory();
+  let list = document.getElementById("historyList");
+
+  if(all.length === 0) {
+    document.getElementById("statsRow").style.display   = "none";
+    document.getElementById("filterRow").style.display  = "none";
+    document.getElementById("countLabel").innerText     = "";
+    list.innerHTML = `
+      <div class="empty">
+        <div class="empty-icon">🚑</div>
+        <div class="empty-title">No requests yet</div>
+        <div class="empty-sub">Your ambulance request history will appear here</div>
+        <a href="/request" class="btn btn-primary">🚑 Make First Request</a>
+      </div>`;
+    return;
+  }
+
+  // Stats
+  document.getElementById("statsRow").style.display  = "grid";
+  document.getElementById("filterRow").style.display = "flex";
+  document.getElementById("totalCount").innerText    = all.length;
+  document.getElementById("criticalCount").innerText = all.filter(x => x.priority === "critical").length;
+  document.getElementById("completedCount").innerText= all.filter(x => x.status === "Completed").length;
+  let ratings = all.filter(x => x.rating).map(x => x.rating);
+  document.getElementById("avgRating").innerText = ratings.length ? (ratings.reduce((a,b)=>a+b,0)/ratings.length).toFixed(1)+"★" : "—";
+  document.getElementById("countLabel").innerText = `(${all.length})`;
+
+  // Filter
+  let filtered = all.filter((x, i) => {
+    if(currentFilter === "all")    return true;
+    if(["critical","moderate","low"].includes(currentFilter)) return x.priority === currentFilter;
+    return (x.status || "").includes(currentFilter);
+  });
+
+  if(filtered.length === 0) {
+    list.innerHTML = `<div class="empty"><div class="empty-icon">🔍</div><div class="empty-title">No results</div><div class="empty-sub">No records match this filter</div></div>`;
+    return;
+  }
+
+  let pBadge = { critical:"b-critical", moderate:"b-moderate", low:"b-low" };
+  let statusBadge = (s) => {
+    if(!s) return "b-status";
+    if(s === "Completed") return "b-completed";
+    if(s === "Cancelled") return "b-cancelled";
+    return "b-status";
+  };
+  let hcCls = (p) => "hc-"+(p||"unknown");
+
+  list.innerHTML = filtered.map((x, fi) => {
+    // Find real index for delete
+    let realIdx = all.indexOf(x);
+    let drv  = x.driver   || {};
+    let hosp = x.hospital || {};
+    let specTags = (hosp.specialties||[]).map(s => `<span class="spec-tag">${s}</span>`).join("");
+    let ratingHtml = x.rating ? `<div class="rating-display">${starStr(x.rating)} <span style="font-size:11px;color:rgba(255,255,255,0.4);margin-left:4px;">${x.rating}/5</span></div>` : "";
+    let emType = (x.emergency_type||"").replace(/\b\w/g, c=>c.toUpperCase());
+
+    return `
+    <div class="history-card ${hcCls(x.priority)}">
+      <div class="card-top">
+        <div>
+          <div class="card-id">#${x.id || "—"}</div>
+          <div style="font-size:15px;font-weight:700;margin-top:3px;">👤 ${x.name||"—"}</div>
+          <div style="font-size:12px;color:rgba(255,255,255,0.45);margin-top:2px;">📞 ${x.phone||"—"}</div>
+        </div>
+        <div style="text-align:right;">
+          <div class="card-time">${formatTime(x.timestamp)} · ${timeAgo(x.timestamp)}</div>
+          <div class="badge-row" style="justify-content:flex-end;margin-top:6px;">
+            ${x.priority ? `<span class="badge ${pBadge[x.priority]||"b-status"}">${x.priority.toUpperCase()}</span>` : ""}
+            ${emType ? `<span class="badge b-status">${emType}</span>` : ""}
+            <span class="badge ${statusBadge(x.status)}">${x.status||"En Route"}</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="card-grid">
+        <div class="card-field">
+          <div class="cf-label">Emergency</div>
+          <div class="cf-val">${x.issue||"—"}</div>
+          ${x.ambulance_needed ? `<div class="cf-sub">🚑 ${x.ambulance_needed}</div>` : ""}
+        </div>
+        <div class="card-field">
+          <div class="cf-label">Driver Assigned</div>
+          <div class="cf-val">${drv.name||"—"}</div>
+          <div class="cf-sub">${drv.vehicle||""}</div>
+          ${drv.ambulance_type ? `<div class="cf-sub">${drv.ambulance_type}</div>` : ""}
+        </div>
+        <div class="card-field">
+          <div class="cf-label">Hospital</div>
+          <div class="cf-val">${hosp.name||"—"}</div>
+          <div class="cf-sub">⭐ ${hosp.rating||"—"} · ${hosp.address||""}</div>
+          <div class="spec-tags">${specTags}</div>
+        </div>
+        <div class="card-field">
+          <div class="cf-label">ETA</div>
+          <div class="cf-val" style="font-family:'JetBrains Mono',monospace;">${x.eta||"—"} min</div>
+          <div class="cf-sub">📍 ${x.location||"—"}</div>
+        </div>
+        <div class="card-field">
+          <div class="cf-label">Driver Phone</div>
+          <div class="cf-val">${drv.phone || "—"}</div>
+          <div class="cf-sub">Hospital: ${hosp.phone||"—"}</div>
+        </div>
+        <div class="card-field">
+          <div class="cf-label">Rating</div>
+          ${x.rating ? ratingHtml : `<div class="cf-val" style="color:rgba(255,255,255,0.3);">Not rated</div>`}
+        </div>
+      </div>
+
+      <div class="card-footer">
+        <div class="dist-info">
+          ${x.driver_dist_km ? `<div class="dist-item">🚑 ${x.driver_dist_km} km (driver)</div>` : ""}
+          ${hosp.dist_km     ? `<div class="dist-item">🏥 ${hosp.dist_km} km (hospital)</div>`  : ""}
+        </div>
+        <button class="btn btn-danger" style="padding:6px 14px;font-size:12px;" onclick="deleteItem(${realIdx})">🗑️ Delete</button>
+      </div>
+    </div>`;
+  }).join("");
+}
+
+render();
+</script>
+</body>
+</html>

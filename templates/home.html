@@ -1,884 +1,438 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
 <title>ResQGo</title>
-
-<link rel="stylesheet"
-href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"/>
-
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"/>
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-
 <style>
-
-*{
-    margin:0;
-    padding:0;
-    box-sizing:border-box;
-}
-
-html{
-    scroll-behavior:smooth;
-}
-
-body{
-    font-family:'Poppins',sans-serif;
-    background:#06152d;
-    color:white;
-    overflow-x:hidden;
-}
+*{ margin:0; padding:0; box-sizing:border-box; }
+html{ scroll-behavior:smooth; }
+body{ font-family:'Poppins',sans-serif; background:#06152d; color:white; overflow-x:hidden; }
 
 /* NAVBAR */
-
 .navbar{
-    position:fixed;
-    top:0;
-    width:100%;
-    z-index:1000;
-
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
-
+    position:fixed; top:0; width:100%; z-index:1000;
+    display:flex; justify-content:space-between; align-items:center;
     padding:16px 65px;
-
-    background:rgba(3,12,28,0.92);
-    backdrop-filter:blur(14px);
-
+    background:rgba(3,12,28,0.92); backdrop-filter:blur(14px);
     border-bottom:1px solid rgba(255,255,255,0.08);
 }
+.logo{ font-size:28px; font-weight:800; }
 
-.logo{
-    font-size:28px;
-    font-weight:800;
-}
-
+/* Desktop nav */
 .nav-links a{
-    text-decoration:none;
-    color:white;
-    margin-left:28px;
-    font-size:15px;
-    transition:0.3s;
+    text-decoration:none; color:white; margin-left:28px;
+    font-size:15px; transition:0.3s;
 }
+.nav-links a:hover{ color:#4db8ff; }
 
-.nav-links a:hover{
-    color:#4db8ff;
+/* HAMBURGER BUTTON */
+.hamburger{
+    display:flex; flex-direction:column; justify-content:center; gap:5px;
+    width:38px; height:38px; cursor:pointer; z-index:2001;
+    background:rgba(255,255,255,0.08); border:1px solid rgba(255,255,255,0.15);
+    border-radius:10px; padding:8px; transition:background 0.2s;
+    flex-shrink:0;
+}
+.hamburger:hover{ background:rgba(255,255,255,0.16); }
+.hamburger span{
+    display:block; height:2px; background:white; border-radius:2px;
+    transition:all 0.35s cubic-bezier(.4,0,.2,1);
+    transform-origin:center;
+}
+.hamburger.open span:nth-child(1){ transform:translateY(7px) rotate(45deg); }
+.hamburger.open span:nth-child(2){ opacity:0; transform:scaleX(0); }
+.hamburger.open span:nth-child(3){ transform:translateY(-7px) rotate(-45deg); }
+
+/* SIDE DRAWER */
+.drawer-backdrop{
+    display:none; position:fixed; inset:0; background:rgba(0,0,0,0.55);
+    z-index:1998; backdrop-filter:blur(3px);
+    opacity:0; transition:opacity 0.3s;
+}
+.drawer-backdrop.show{ display:block; opacity:1; }
+
+.drawer{
+    position:fixed; top:0; right:-320px; width:290px; height:100vh;
+    background:linear-gradient(180deg,#081b38,#0a2347);
+    border-left:1px solid rgba(255,255,255,0.1);
+    z-index:1999; transition:right 0.35s cubic-bezier(.4,0,.2,1);
+    display:flex; flex-direction:column; padding:0;
+    box-shadow:-20px 0 60px rgba(0,0,0,0.5);
+}
+.drawer.open{ right:0; }
+
+.drawer-header{
+    display:flex; align-items:center; justify-content:space-between;
+    padding:22px 24px 18px;
+    border-bottom:1px solid rgba(255,255,255,0.08);
+}
+.drawer-logo{ font-size:20px; font-weight:800; }
+.drawer-close{
+    width:32px; height:32px; border-radius:8px;
+    background:rgba(255,255,255,0.08); border:none;
+    color:white; font-size:16px; cursor:pointer;
+    display:flex; align-items:center; justify-content:center;
+    transition:background 0.2s;
+}
+.drawer-close:hover{ background:rgba(255,255,255,0.18); }
+
+.drawer-nav{
+    flex:1; padding:18px 16px; display:flex; flex-direction:column; gap:6px;
+}
+.drawer-item{
+    display:flex; align-items:center; gap:14px;
+    padding:13px 16px; border-radius:12px;
+    text-decoration:none; color:rgba(255,255,255,0.85);
+    font-size:15px; font-weight:500;
+    transition:all 0.2s; cursor:pointer; border:none; background:none; width:100%;
+    text-align:left; font-family:'Poppins',sans-serif;
+}
+.drawer-item:hover{
+    background:rgba(255,255,255,0.08); color:white;
+    transform:translateX(4px);
+}
+.drawer-item .di-icon{
+    width:38px; height:38px; border-radius:10px;
+    background:rgba(77,184,255,0.15); border:1px solid rgba(77,184,255,0.2);
+    display:flex; align-items:center; justify-content:center;
+    font-size:16px; flex-shrink:0; transition:background 0.2s;
+}
+.drawer-item:hover .di-icon{ background:rgba(77,184,255,0.25); }
+.drawer-item.history-item .di-icon{ background:rgba(255,180,50,0.12); border-color:rgba(255,180,50,0.25); }
+.drawer-item.history-item:hover .di-icon{ background:rgba(255,180,50,0.22); }
+.di-label{ display:flex; flex-direction:column; }
+.di-label span{ font-size:13px; color:rgba(255,255,255,0.4); font-weight:400; margin-top:1px; }
+.drawer-divider{ height:1px; background:rgba(255,255,255,0.07); margin:6px 16px; }
+
+.drawer-footer{
+    padding:16px 24px; border-top:1px solid rgba(255,255,255,0.08);
+    font-size:11px; color:rgba(255,255,255,0.3);
 }
 
 /* COMMON */
-
-section{
-    padding:60px 6%;
-}
-
-.section-title{
-    text-align:center;
-    font-size:42px;
-    margin-bottom:18px;
-    font-weight:800;
-}
-
-.section-subtitle{
-    text-align:center;
-    color:#cfe6ff;
-    font-size:16px;
-    max-width:850px;
-    margin:auto;
-    line-height:1.8;
-}
+section{ padding:60px 6%; }
+.section-title{ text-align:center; font-size:42px; margin-bottom:18px; font-weight:800; }
+.section-subtitle{ text-align:center; color:#cfe6ff; font-size:16px; max-width:850px; margin:auto; line-height:1.8; }
 
 /* HERO */
-
 .hero{
-    min-height:100vh;
-
-    display:flex;
-    align-items:center;
-    justify-content:center;
-
-    text-align:center;
-
-    padding-top:110px;
-
-    background:
-    linear-gradient(rgba(0,0,0,0.6),
-    rgba(0,0,0,0.72)),
-    url('/static/bg.png');
-
-    background-size:cover;
-    background-position:center;
+    min-height:100vh; display:flex; align-items:center; justify-content:center;
+    text-align:center; padding-top:110px;
+    background:linear-gradient(rgba(0,0,0,0.6),rgba(0,0,0,0.72)),url('/static/bg.png');
+    background-size:cover; background-position:center;
 }
-
-.hero-content{
-    max-width:950px;
-}
-
-.hero h1{
-    font-size:52px;
-    line-height:1.3;
-    font-weight:900;
-}
-
-.hero p{
-    font-size:16px;
-    max-width:850px;
-    margin:auto;
-    margin-top:22px;
-    line-height:1.9;
-    color:#d7e8ff;
-}
-
+.hero-content{ max-width:950px; }
+.hero h1{ font-size:52px; line-height:1.3; font-weight:900; }
+.hero p{ font-size:16px; max-width:850px; margin:auto; margin-top:22px; line-height:1.9; color:#d7e8ff; }
 .hero-btn{
     margin-top:38px;
-
-    background:linear-gradient(
-        135deg,
-        #ff2e2e,
-        #ff6a00
-    );
-
-    color:white;
-    border:none;
-
-    padding:15px 32px;
-
-    font-size:17px;
-
-    border-radius:60px;
-
-    font-weight:700;
-
-    cursor:pointer;
-
-    transition:0.35s ease;
-
+    background:linear-gradient(135deg,#ff2e2e,#ff6a00);
+    color:white; border:none; padding:15px 32px;
+    font-size:17px; border-radius:60px; font-weight:700;
+    cursor:pointer; transition:0.35s ease;
     box-shadow:0 10px 35px rgba(255,80,0,0.35);
-
     animation:pulse 2s infinite;
 }
-
-.hero-btn:hover{
-    transform:translateY(-5px) scale(1.05);
-}
-
+.hero-btn:hover{ transform:translateY(-5px) scale(1.05); }
 @keyframes pulse{
-
-    0%{
-        box-shadow:0 0 0 0 rgba(255,60,0,0.6);
-    }
-
-    70%{
-        box-shadow:0 0 0 18px rgba(255,60,0,0);
-    }
-
-    100%{
-        box-shadow:0 0 0 0 rgba(255,60,0,0);
-    }
+    0%{ box-shadow:0 0 0 0 rgba(255,60,0,0.6); }
+    70%{ box-shadow:0 0 0 18px rgba(255,60,0,0); }
+    100%{ box-shadow:0 0 0 0 rgba(255,60,0,0); }
 }
 
 /* ABOUT */
-
-.about{
-    background:
-    linear-gradient(135deg,#071a35,#0a2347);
-}
-
-.about-container{
-    margin-top:45px;
-
-    display:grid;
-    grid-template-columns:1fr 1fr;
-
-    gap:45px;
-    align-items:center;
-}
-
-.about-text{
-    font-size:17px;
-    line-height:2;
-    color:#d7e8ff;
-    font-weight:500;
-}
-
-.about-text p{
-    margin-bottom:16px;
-}
-
-.about-image img{
-    width:100%;
-    height:90%;
-    object-fit:cover;
-
-    border-radius:28px;
-
-    box-shadow:0 18px 45px rgba(0,0,0,0.35);
-}
+.about{ background:linear-gradient(135deg,#071a35,#0a2347); }
+.about-container{ margin-top:45px; display:grid; grid-template-columns:1fr 1fr; gap:45px; align-items:center; }
+.about-text{ font-size:17px; line-height:2; color:#d7e8ff; font-weight:500; }
+.about-text p{ margin-bottom:16px; }
+.about-image img{ width:100%; height:90%; object-fit:cover; border-radius:28px; box-shadow:0 18px 45px rgba(0,0,0,0.35); }
 
 /* WHY US */
-
-.why{
-    background:
-    linear-gradient(135deg,#06152d,#082041);
-}
-
-.features-grid{
-    display:grid;
-
-    grid-template-columns:repeat(4,1fr);
-
-    gap:20px;
-
-    margin-top:45px;
-}
-
+.why{ background:linear-gradient(135deg,#06152d,#082041); }
+.features-grid{ display:grid; grid-template-columns:repeat(4,1fr); gap:20px; margin-top:45px; }
 .feature-card{
-    background:rgba(255,255,255,0.08);
-
-    border:1px solid rgba(255,255,255,0.12);
-
-    border-radius:26px;
-
-    padding:24px 20px;
-
-    backdrop-filter:blur(18px);
-
-    transition:0.35s ease;
-
-    text-align:center;
+    background:rgba(255,255,255,0.08); border:1px solid rgba(255,255,255,0.12);
+    border-radius:26px; padding:24px 20px; backdrop-filter:blur(18px);
+    transition:0.35s ease; text-align:center;
 }
-
-.feature-card:hover{
-    transform:translateY(-8px);
-
-    box-shadow:0 15px 35px rgba(0,0,0,0.35);
-}
-
+.feature-card:hover{ transform:translateY(-8px); box-shadow:0 15px 35px rgba(0,0,0,0.35); }
 .feature-icon{
-    width:68px;
-    height:68px;
-
-    font-size:28px;
-
-    border-radius:22px;
-
-    display:flex;
-    align-items:center;
-    justify-content:center;
-
-    margin:auto;
-    margin-bottom:22px;
-
-    background:linear-gradient(
-        135deg,
-        #59d7ff,
-        #2f8cff
-    );
-
-    color:white;
-
-    box-shadow:0 10px 25px rgba(0,140,255,0.35);
+    width:68px; height:68px; font-size:28px; border-radius:22px;
+    display:flex; align-items:center; justify-content:center;
+    margin:auto; margin-bottom:22px;
+    background:linear-gradient(135deg,#59d7ff,#2f8cff);
+    color:white; box-shadow:0 10px 25px rgba(0,140,255,0.35);
 }
-
-.feature-card h3{
-    font-size:22px;
-    margin-bottom:14px;
-    line-height:1.4;
-}
-
-.feature-card p{
-    color:#d3e7ff;
-    line-height:1.8;
-    font-size:14px;
-}
+.feature-card h3{ font-size:22px; margin-bottom:14px; line-height:1.4; }
+.feature-card p{ color:#d3e7ff; line-height:1.8; font-size:14px; }
 
 /* CONTACT */
-
-.contact{
-    background:
-    linear-gradient(135deg,#081b38,#0c2d5c);
-}
-
-.contact-header{
-    text-align:center;
-    margin-bottom:45px;
-}
-
-.contact-header h2{
-    font-size:42px;
-    margin-bottom:18px;
-}
-
-.contact-header p{
-    font-size:16px;
-    color:#d7e8ff;
-}
-
-/* TOP CALL BOX */
-
+.contact{ background:linear-gradient(135deg,#081b38,#0c2d5c); }
+.contact-header{ text-align:center; margin-bottom:45px; }
+.contact-header h2{ font-size:42px; margin-bottom:18px; }
+.contact-header p{ font-size:16px; color:#d7e8ff; }
 .top-call-box{
-
-    background:linear-gradient(
-        135deg,
-        #10396d,
-        #154b89
-    );
-
-    border-radius:28px;
-
-    padding:22px 30px;
-
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
-
-    gap:20px;
-
-    margin-bottom:40px;
-
-    box-shadow:0 18px 45px rgba(0,0,0,0.25);
+    background:linear-gradient(135deg,#10396d,#154b89);
+    border-radius:28px; padding:22px 30px;
+    display:flex; justify-content:space-between; align-items:center;
+    gap:20px; margin-bottom:40px; box-shadow:0 18px 45px rgba(0,0,0,0.25);
 }
-
-.call-left{
-    display:flex;
-    align-items:center;
-    gap:20px;
-}
-
+.call-left{ display:flex; align-items:center; gap:20px; }
 .call-icon{
-
-    width:75px;
-    height:75px;
-
-    border-radius:22px;
-
-    background:#7fd8ff;
-
-    display:flex;
-    align-items:center;
-    justify-content:center;
-
-    font-size:30px;
-
-    color:#082041;
+    width:75px; height:75px; border-radius:22px;
+    background:#7fd8ff; display:flex; align-items:center; justify-content:center;
+    font-size:30px; color:#082041;
 }
-
-.call-text h3{
-    font-size:28px;
-    margin-bottom:6px;
-}
-
-.call-text p{
-    color:#d7e8ff;
-    font-size:15px;
-}
-
+.call-text h3{ font-size:28px; margin-bottom:6px; }
+.call-text p{ color:#d7e8ff; font-size:15px; }
 .top-call-btn{
-
-    background:#12bfff;
-
-    color:white;
-
-    text-decoration:none;
-
-    padding:15px 28px;
-
-    border-radius:50px;
-
-    font-size:18px;
-    font-weight:700;
-
-    transition:0.3s;
+    background:#12bfff; color:white; text-decoration:none;
+    padding:15px 28px; border-radius:50px; font-size:18px; font-weight:700; transition:0.3s;
 }
-
-.top-call-btn:hover{
-    transform:translateY(-4px);
-    background:#31cbff;
-}
-
-/* CONTACT GRID */
-
-.contact-grid{
-    display:grid;
-
-    grid-template-columns:repeat(4,1fr);
-
-    gap:20px;
-}
-
+.top-call-btn:hover{ transform:translateY(-4px); background:#31cbff; }
+.contact-grid{ display:grid; grid-template-columns:repeat(4,1fr); gap:20px; }
 .contact-card{
-
-    background:rgba(255,255,255,0.08);
-
-    border:1px solid rgba(255,255,255,0.12);
-
-    border-radius:26px;
-
-    padding:22px 18px;
-
-    backdrop-filter:blur(18px);
-
-    transition:0.35s ease;
-
-    text-align:center;
+    background:rgba(255,255,255,0.08); border:1px solid rgba(255,255,255,0.12);
+    border-radius:26px; padding:22px 18px; backdrop-filter:blur(18px);
+    transition:0.35s ease; text-align:center;
 }
-
-.contact-card:hover{
-    transform:translateY(-8px);
-
-    box-shadow:0 15px 35px rgba(0,0,0,0.3);
-}
-
+.contact-card:hover{ transform:translateY(-8px); box-shadow:0 15px 35px rgba(0,0,0,0.3); }
 .icon-box{
-
-    width:70px;
-    height:70px;
-
-    border-radius:20px;
-
-    background:#7fd8ff;
-
-    display:flex;
-    align-items:center;
-    justify-content:center;
-
-    color:#082041;
-
-    font-size:28px;
-
-    margin:auto;
-    margin-bottom:20px;
+    width:70px; height:70px; border-radius:20px; background:#7fd8ff;
+    display:flex; align-items:center; justify-content:center;
+    color:#082041; font-size:28px; margin:auto; margin-bottom:20px;
 }
-
-.contact-card h4{
-    font-size:20px;
-    margin-bottom:12px;
-    color:#7fd8ff;
-}
-
-.contact-card p{
-    font-size:14px;
-    color:#d7e8ff;
-    line-height:1.8;
-}
+.contact-card h4{ font-size:20px; margin-bottom:12px; color:#7fd8ff; }
+.contact-card p{ font-size:14px; color:#d7e8ff; line-height:1.8; }
 
 /* FOOTER */
-
 .footer{
-    background:#04101f;
-
-    padding:25px 6%;
-
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
-
+    background:#04101f; padding:25px 6%;
+    display:flex; justify-content:space-between; align-items:center;
     border-top:1px solid rgba(255,255,255,0.08);
 }
-
-.footer p{
-    color:#a9c4e5;
-    font-size:14px;
-}
-
-.social-icons a{
-    color:white;
-    margin-left:18px;
-    font-size:18px;
-    transition:0.3s;
-}
-
-.social-icons a:hover{
-    color:#4db8ff;
-}
+.footer p{ color:#a9c4e5; font-size:14px; }
+.social-icons a{ color:white; margin-left:18px; font-size:18px; transition:0.3s; }
+.social-icons a:hover{ color:#4db8ff; }
 
 /* MOBILE */
-
 @media(max-width:1100px){
-
-    .features-grid{
-        grid-template-columns:repeat(2,1fr);
-    }
-
-    .contact-grid{
-        grid-template-columns:repeat(2,1fr);
-    }
+    .features-grid{ grid-template-columns:repeat(2,1fr); }
+    .contact-grid{ grid-template-columns:repeat(2,1fr); }
 }
-
 @media(max-width:900px){
-
-    .navbar{
-        padding:16px 25px;
-    }
-
-    .nav-links{
-        display:none;
-    }
-
-    .hero{
-        min-height:100vh;
-        padding-top:120px;
-    }
-
-    .hero h1{
-        font-size:36px;
-        line-height:1.4;
-    }
-
-    .hero p{
-        font-size:15px;
-    }
-
-    .section-title,
-    .contact-header h2{
-        font-size:34px;
-    }
-
-    .about-container{
-        grid-template-columns:1fr;
-    }
-
-    .about-text{
-        font-size:16px;
-    }
-
-    .features-grid{
-        grid-template-columns:1fr;
-    }
-
-    .contact-grid{
-        grid-template-columns:1fr;
-    }
-
-    .top-call-box{
-        flex-direction:column;
-        text-align:center;
-    }
-
-    .call-left{
-        flex-direction:column;
-    }
-
-    .top-call-btn{
-        width:100%;
-        text-align:center;
-    }
-
-    .footer{
-        flex-direction:column;
-        gap:15px;
-        text-align:center;
-    }
+    .navbar{ padding:16px 25px; }
+    .nav-links{ display:none; }
+    .hero{ min-height:100vh; padding-top:120px; }
+    .hero h1{ font-size:36px; line-height:1.4; }
+    .hero p{ font-size:15px; }
+    .section-title,.contact-header h2{ font-size:34px; }
+    .about-container{ grid-template-columns:1fr; }
+    .about-text{ font-size:16px; }
+    .features-grid,.contact-grid{ grid-template-columns:1fr; }
+    .top-call-box{ flex-direction:column; text-align:center; }
+    .call-left{ flex-direction:column; }
+    .top-call-btn{ width:100%; text-align:center; }
+    .footer{ flex-direction:column; gap:15px; text-align:center; }
 }
-
 </style>
 </head>
-
 <body>
 
 <!-- NAVBAR -->
-
 <div class="navbar">
-
-    <div class="logo">
-        🚑 ResQGo
-    </div>
-
+    <div class="logo">🚑 ResQGo</div>
     <div class="nav-links">
         <a href="#home">Home</a>
         <a href="#about">About</a>
         <a href="#why">Why Us</a>
         <a href="#contact">Contact</a>
     </div>
+    <div class="hamburger" id="hamburger" onclick="toggleDrawer()">
+        <span></span><span></span><span></span>
+    </div>
+</div>
 
+<!-- BACKDROP -->
+<div class="drawer-backdrop" id="drawerBackdrop" onclick="closeDrawer()"></div>
+
+<!-- SIDE DRAWER -->
+<div class="drawer" id="drawer">
+    <div class="drawer-header">
+        <div class="drawer-logo">🚑 ResQGo</div>
+        <button class="drawer-close" onclick="closeDrawer()">✕</button>
+    </div>
+    <nav class="drawer-nav">
+        <a class="drawer-item" href="#home" onclick="closeDrawer()">
+            <div class="di-icon">🏠</div>
+            <div class="di-label">Home<span>Back to top</span></div>
+        </a>
+        <a class="drawer-item" href="#about" onclick="closeDrawer()">
+            <div class="di-icon">ℹ️</div>
+            <div class="di-label">About Us<span>Our mission &amp; story</span></div>
+        </a>
+        <a class="drawer-item" href="#why" onclick="closeDrawer()">
+            <div class="di-icon">⚡</div>
+            <div class="di-label">Why Us<span>Features &amp; benefits</span></div>
+        </a>
+        <a class="drawer-item" href="#contact" onclick="closeDrawer()">
+            <div class="di-icon">📞</div>
+            <div class="di-label">Contact Us<span>Reach our team</span></div>
+        </a>
+        <div class="drawer-divider"></div>
+        <a class="drawer-item history-item" href="/history" onclick="closeDrawer()">
+            <div class="di-icon">📋</div>
+            <div class="di-label">History<span>View past requests</span></div>
+        </a>
+        <a class="drawer-item" href="/request" onclick="closeDrawer()">
+            <div class="di-icon">🚑</div>
+            <div class="di-label">Request<span>New emergency request</span></div>
+        </a>
+    </nav>
+    <div class="drawer-footer">© 2026 ResQGo · All Rights Reserved</div>
 </div>
 
 <!-- HERO -->
-
 <section class="hero" id="home">
-
     <div class="hero-content">
-
-        <h1>
-            Smart Emergency <br>
-            Ambulance Dispatch System
-        </h1>
-
+        <h1>Smart Emergency <br>Ambulance Dispatch System</h1>
         <p>
             ResQGo is an AI-powered emergency ambulance coordination platform
             designed to reduce response time using real-time GPS tracking,
             intelligent ambulance allocation, route optimization,
             and live emergency monitoring.
         </p>
-
-        <button class="hero-btn"
-        onclick="window.location.href='/request'">
-
+        <button class="hero-btn" onclick="window.location.href='/request'">
             Request Ambulance 🚑
-
         </button>
-
     </div>
-
 </section>
 
 <!-- ABOUT -->
-
 <section class="about" id="about">
-
     <h2 class="section-title">About Us</h2>
-
     <p class="section-subtitle">
-        Technology-driven emergency healthcare solution built for faster
-        ambulance coordination and life-saving response.
+        Technology-driven emergency healthcare solution built for faster ambulance coordination and life-saving response.
     </p>
-
     <div class="about-container">
-
         <div class="about-text">
-
-            <p>
-                ResQGo is a smart ambulance management platform designed
-                to reduce emergency response delays using intelligent
-                GPS-based dispatch systems.
-            </p>
-
-            <p>
-                The platform integrates real-time ambulance tracking,
-                shortest-route optimization, live monitoring,
-                and centralized emergency coordination.
-            </p>
-
-            <p>
-                Built using Flask, Socket.IO, OpenStreetMap APIs,
-                and Geolocation services, ResQGo delivers a modern
-                healthcare emergency experience similar to ride-booking apps.
-            </p>
-
-            <p>
-                Our mission is to save lives through fast, reliable,
-                and technology-powered ambulance services.
-            </p>
-
+            <p>ResQGo is a smart ambulance management platform designed to reduce emergency response delays using intelligent GPS-based dispatch systems.</p>
+            <p>The platform integrates real-time ambulance tracking, shortest-route optimization, live monitoring, and centralized emergency coordination.</p>
+            <p>Built using Flask, Socket.IO, OpenStreetMap APIs, and Geolocation services, ResQGo delivers a modern healthcare emergency experience similar to ride-booking apps.</p>
+            <p>Our mission is to save lives through fast, reliable, and technology-powered ambulance services.</p>
         </div>
-
         <div class="about-image">
-
-            <img src="/static/ambulance.jpg">
-
+            <img src="/static/ambulance.jpg" alt="Ambulance">
         </div>
-
     </div>
-
 </section>
 
 <!-- WHY US -->
-
 <section class="why" id="why">
-
     <h2 class="section-title">Why Us?</h2>
-
     <p class="section-subtitle">
-        Smart emergency features designed for fast ambulance allocation,
-        live monitoring, and optimized healthcare response.
+        Smart emergency features designed for fast ambulance allocation, live monitoring, and optimized healthcare response.
     </p>
-
     <div class="features-grid">
-
         <div class="feature-card">
-
-            <div class="feature-icon">
-                <i class="fa-solid fa-location-crosshairs"></i>
-            </div>
-
+            <div class="feature-icon"><i class="fa-solid fa-location-crosshairs"></i></div>
             <h3>Live GPS Tracking</h3>
-
-            <p>
-                Monitor ambulance movement in real-time with accurate
-                live location updates and ETA tracking.
-            </p>
-
+            <p>Monitor ambulance movement in real-time with accurate live location updates and ETA tracking.</p>
         </div>
-
         <div class="feature-card">
-
-            <div class="feature-icon">
-                <i class="fa-solid fa-truck-medical"></i>
-            </div>
-
+            <div class="feature-icon"><i class="fa-solid fa-truck-medical"></i></div>
             <h3>Smart Dispatch</h3>
-
-            <p>
-                Automatically assigns the nearest available ambulance
-                using shortest-distance calculations.
-            </p>
-
+            <p>Automatically assigns the nearest available ambulance using shortest-distance calculations.</p>
         </div>
-
         <div class="feature-card">
-
-            <div class="feature-icon">
-                <i class="fa-solid fa-route"></i>
-            </div>
-
+            <div class="feature-icon"><i class="fa-solid fa-route"></i></div>
             <h3>Optimized Routing</h3>
-
-            <p>
-                Uses shortest-path route optimization logic
-                to reduce travel time during emergencies.
-            </p>
-
+            <p>Uses shortest-path route optimization logic to reduce travel time during emergencies.</p>
         </div>
-
         <div class="feature-card">
-
-            <div class="feature-icon">
-                <i class="fa-solid fa-clock"></i>
-            </div>
-
+            <div class="feature-icon"><i class="fa-solid fa-clock"></i></div>
             <h3>24/7 Support</h3>
-
-            <p>
-                Round-the-clock emergency healthcare support
-                with continuous coordination and monitoring.
-            </p>
-
+            <p>Round-the-clock emergency healthcare support with continuous coordination and monitoring.</p>
         </div>
-
     </div>
-
 </section>
 
 <!-- CONTACT -->
-
 <section class="contact" id="contact">
-
     <div class="contact-header">
-
         <h2>Contact Us</h2>
-
-        <p>
-            Reach out anytime for emergency ambulance assistance
-            and healthcare support services.
-        </p>
-
+        <p>Reach out anytime for emergency ambulance assistance and healthcare support services.</p>
     </div>
-
     <div class="top-call-box">
-
         <div class="call-left">
-
-            <div class="call-icon">
-                <i class="fa-solid fa-phone-volume"></i>
-            </div>
-
+            <div class="call-icon"><i class="fa-solid fa-phone-volume"></i></div>
             <div class="call-text">
-
                 <h3>24/7 Emergency Support</h3>
-
                 <p>Instant Ambulance Dispatch Assistance</p>
-
             </div>
-
         </div>
-
-        <a href="tel:+919141407478" class="top-call-btn">
-            +91 9141407478
-        </a>
-
+        <a href="tel:+919141407478" class="top-call-btn">+91 9141407478</a>
     </div>
-
-    <!-- CONTACT GRID -->
-
     <div class="contact-grid">
-
         <div class="contact-card">
-
-            <div class="icon-box">
-                <i class="fa-solid fa-location-dot"></i>
-            </div>
-
+            <div class="icon-box"><i class="fa-solid fa-location-dot"></i></div>
             <h4>Address</h4>
-
-            <p>
-                Electronic City,<br>
-                Bangalore - 560100
-            </p>
-
+            <p>Electronic City,<br>Bangalore - 560100</p>
         </div>
-
         <div class="contact-card">
-
-            <div class="icon-box">
-                <i class="fa-solid fa-envelope"></i>
-            </div>
-
+            <div class="icon-box"><i class="fa-solid fa-envelope"></i></div>
             <h4>Email</h4>
-
-            <p>
-                resqgosupport@gmail.com
-            </p>
-
+            <p>resqgosupport@gmail.com</p>
         </div>
-
         <div class="contact-card">
-
-            <div class="icon-box">
-                <i class="fa-solid fa-globe"></i>
-            </div>
-
+            <div class="icon-box"><i class="fa-solid fa-globe"></i></div>
             <h4>Website</h4>
-
-            <p>
-                www.resqgo.com
-            </p>
-
+            <p>www.resqgo.com</p>
         </div>
-
         <div class="contact-card">
-
-            <div class="icon-box">
-                <i class="fa-solid fa-clock"></i>
-            </div>
-
+            <div class="icon-box"><i class="fa-solid fa-clock"></i></div>
             <h4>Availability</h4>
-
-            <p>
-                24/7 Ambulance Service
-            </p>
-
+            <p>24/7 Ambulance Service</p>
         </div>
-
     </div>
-
 </section>
 
 <!-- FOOTER -->
-
 <div class="footer">
-
-    <p>
-        © 2026 ResQGo. All Rights Reserved.
-    </p>
-
+    <p>© 2026 ResQGo. All Rights Reserved.</p>
     <div class="social-icons">
-
         <a href="#"><i class="fab fa-facebook-f"></i></a>
-
         <a href="#"><i class="fab fa-instagram"></i></a>
-
         <a href="#"><i class="fab fa-twitter"></i></a>
-
         <a href="#"><i class="fab fa-linkedin-in"></i></a>
-
         <a href="#"><i class="fab fa-youtube"></i></a>
-
     </div>
-
 </div>
 
+<script>
+function toggleDrawer() {
+    const drawer   = document.getElementById('drawer');
+    const backdrop = document.getElementById('drawerBackdrop');
+    const ham      = document.getElementById('hamburger');
+    const isOpen   = drawer.classList.contains('open');
+    if (isOpen) { closeDrawer(); }
+    else {
+        drawer.classList.add('open');
+        backdrop.classList.add('show');
+        ham.classList.add('open');
+        document.body.style.overflow = 'hidden';
+    }
+}
+function closeDrawer() {
+    document.getElementById('drawer').classList.remove('open');
+    document.getElementById('drawerBackdrop').classList.remove('show');
+    document.getElementById('hamburger').classList.remove('open');
+    document.body.style.overflow = '';
+}
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeDrawer(); });
+</script>
 </body>
 </html>
